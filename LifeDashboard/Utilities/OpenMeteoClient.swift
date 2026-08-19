@@ -9,6 +9,17 @@ struct OpenMeteoWeatherSnapshot {
     let high: Double
     let low: Double
     let days: [OpenMeteoDay]
+
+    // 以下为详情页所需的扩展字段，旧调用方（如 Widget）可省略。
+    var weatherCode: Int = -1
+    var feelsLike: Double = 0
+    var humidity: Int? = nil
+    var windSpeed: Double? = nil
+    var pressure: Double? = nil
+    var precipitationProbability: Int? = nil
+    var sunrise: Date? = nil
+    var sunset: Date? = nil
+    var hourly: [WeatherHour] = []
 }
 
 struct OpenMeteoDay: Identifiable, Hashable {
@@ -19,12 +30,25 @@ struct OpenMeteoDay: Identifiable, Hashable {
     let weatherCode: Int
     let conditionText: String
     let conditionID: Int
+    var precipitationProbability: Int? = nil
+}
+
+/// 逐小时天气预报。
+struct WeatherHour: Identifiable, Hashable {
+    let id = UUID()
+    let date: Date
+    let temperature: Double
+    let weatherCode: Int
+    let conditionText: String
+    let conditionID: Int
+    let humidity: Int?
+    let precipitationProbability: Int?
 }
 
 struct OpenMeteoClient {
     static let shared = OpenMeteoClient()
 
-    func fetchWeather(city: String, forecastDays: Int = 3) async throws -> OpenMeteoWeatherSnapshot {
+    func fetchWeather(city: String, forecastDays: Int = 7) async throws -> OpenMeteoWeatherSnapshot {
         // 1. 城市名 -> 经纬度
         var geoComponents = URLComponents(string: "https://geocoding-api.open-meteo.com/v1/search")
         geoComponents?.queryItems = [
@@ -42,15 +66,17 @@ struct OpenMeteoClient {
             throw OpenMeteoError.cityNotFound
         }
 
-        // 2. 经纬度 -> 当前天气 + 多日预报
+        // 2. 经纬度 -> 当前天气 + 逐小时 + 多日预报
         var forecastComponents = URLComponents(string: "https://api.open-meteo.com/v1/forecast")
         forecastComponents?.queryItems = [
             URLQueryItem(name: "latitude", value: String(place.latitude)),
             URLQueryItem(name: "longitude", value: String(place.longitude)),
-            URLQueryItem(name: "current", value: "temperature_2m,weather_code"),
-            URLQueryItem(name: "daily", value: "weather_code,temperature_2m_max,temperature_2m_min"),
+            URLQueryItem(name: "current", value: "temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,surface_pressure"),
+            URLQueryItem(name: "daily", value: "weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max"),
+            URLQueryItem(name: "hourly", value: "temperature_2m,relative_humidity_2m,weather_code,precipitation_probability"),
             URLQueryItem(name: "timezone", value: "auto"),
-            URLQueryItem(name: "forecast_days", value: String(max(1, forecastDays)))
+            URLQueryItem(name: "forecast_days", value: String(max(1, forecastDays))),
+            URLQueryItem(name: "forecast_hours", value: "24")
         ]
         guard let forecastURL = forecastComponents?.url else {
             throw URLError(.badURL)
@@ -62,18 +88,54 @@ struct OpenMeteoClient {
         let currentCondition = Self.condition(for: currentCode)
 
         let daily = forecast.daily
-        let formatter = Self.dayFormatter
+        let dayFormatter = Self.dayFormatter
+        let timeFormatter = Self.timeFormatter
+        let dailyPrecip = daily.precipitation_probability_max ?? []
+
         let days = daily.time.enumerated().compactMap { index, dateString -> OpenMeteoDay? in
-            guard let date = formatter.date(from: dateString) else { return nil }
+            guard let date = dayFormatter.date(from: dateString) else { return nil }
             let code = index < daily.weather_code.count ? daily.weather_code[index] : 0
             let condition = Self.condition(for: code)
             let high = index < daily.temperature_2m_max.count ? daily.temperature_2m_max[index] : forecast.current.temperature_2m
             let low = index < daily.temperature_2m_min.count ? daily.temperature_2m_min[index] : forecast.current.temperature_2m
-            return OpenMeteoDay(date: date, high: high, low: low, weatherCode: code, conditionText: condition.text, conditionID: condition.id)
+            let precip = index < dailyPrecip.count ? dailyPrecip[index] : nil
+            return OpenMeteoDay(
+                date: date,
+                high: high,
+                low: low,
+                weatherCode: code,
+                conditionText: condition.text,
+                conditionID: condition.id,
+                precipitationProbability: precip
+            )
+        }
+
+        let hourlyHumidity = forecast.hourly.relative_humidity_2m ?? []
+        let hourlyPrecip = forecast.hourly.precipitation_probability ?? []
+        let hourly = forecast.hourly.time.enumerated().compactMap { index, dateString -> WeatherHour? in
+            guard let date = timeFormatter.date(from: dateString) else { return nil }
+            let code = index < forecast.hourly.weather_code.count ? forecast.hourly.weather_code[index] : 0
+            let condition = Self.condition(for: code)
+            let temperature = index < forecast.hourly.temperature_2m.count ? forecast.hourly.temperature_2m[index] : forecast.current.temperature_2m
+            let humidity = index < hourlyHumidity.count ? Int(hourlyHumidity[index].rounded()) : nil
+            let precip = index < hourlyPrecip.count ? hourlyPrecip[index] : nil
+            return WeatherHour(
+                date: date,
+                temperature: temperature,
+                weatherCode: code,
+                conditionText: condition.text,
+                conditionID: condition.id,
+                humidity: humidity,
+                precipitationProbability: precip
+            )
         }
 
         let high = daily.temperature_2m_max.first ?? forecast.current.temperature_2m
         let low = daily.temperature_2m_min.first ?? forecast.current.temperature_2m
+        let feelsLike = forecast.current.apparent_temperature ?? forecast.current.temperature_2m
+        let sunrise = daily.sunrise?.first.flatMap { timeFormatter.date(from: $0) }
+        let sunset = daily.sunset?.first.flatMap { timeFormatter.date(from: $0) }
+        let todayPrecip = dailyPrecip.first
         let cityName = place.name.isEmpty ? city : place.name
 
         return OpenMeteoWeatherSnapshot(
@@ -83,7 +145,16 @@ struct OpenMeteoClient {
             conditionID: currentCondition.id,
             high: high,
             low: low,
-            days: days
+            days: days,
+            weatherCode: currentCode,
+            feelsLike: feelsLike,
+            humidity: forecast.current.relative_humidity_2m.map { Int($0.rounded()) },
+            windSpeed: forecast.current.wind_speed_10m,
+            pressure: forecast.current.surface_pressure,
+            precipitationProbability: todayPrecip,
+            sunrise: sunrise,
+            sunset: sunset,
+            hourly: hourly
         )
     }
 
@@ -126,6 +197,14 @@ struct OpenMeteoClient {
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter
     }()
+
+    private static let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
+        return formatter
+    }()
 }
 
 enum OpenMeteoError: Error {
@@ -147,10 +226,16 @@ struct OpenMeteoGeocodingResponse: Decodable {
 struct OpenMeteoForecastResponse: Decodable {
     let current: Current
     let daily: Daily
+    let hourly: Hourly
 
     struct Current: Decodable {
         let temperature_2m: Double
         let weather_code: Int
+        let relative_humidity_2m: Double?
+        let apparent_temperature: Double?
+        let precipitation: Double?
+        let wind_speed_10m: Double?
+        let surface_pressure: Double?
     }
 
     struct Daily: Decodable {
@@ -158,5 +243,16 @@ struct OpenMeteoForecastResponse: Decodable {
         let weather_code: [Int]
         let temperature_2m_max: [Double]
         let temperature_2m_min: [Double]
+        let sunrise: [String]?
+        let sunset: [String]?
+        let precipitation_probability_max: [Int]?
+    }
+
+    struct Hourly: Decodable {
+        let time: [String]
+        let temperature_2m: [Double]
+        let weather_code: [Int]
+        let relative_humidity_2m: [Double]?
+        let precipitation_probability: [Int]?
     }
 }
