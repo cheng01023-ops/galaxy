@@ -21,6 +21,7 @@ final class PomodoroViewModel: ObservableObject {
 
     init() {
         remainingSeconds = focusDurationSeconds
+        restoreIfNeeded()
     }
 
     // MARK: - 对外操作
@@ -41,6 +42,7 @@ final class PomodoroViewModel: ObservableObject {
             after: TimeInterval(remainingSeconds),
             phaseTitle: phase.title
         )
+        persistRunningState()
     }
 
     func pause() {
@@ -48,19 +50,23 @@ final class PomodoroViewModel: ObservableObject {
         isRunning = false
         timer?.cancel()
         timer = nil
+        endDate = nil
         NotificationService.shared.cancelPomodoroNotification()
         endLiveActivity()
+        persistRunningState()
     }
 
     func reset() {
         timer?.cancel()
         timer = nil
         isRunning = false
+        endDate = nil
         NotificationService.shared.cancelPomodoroNotification()
         endLiveActivity()
 
         phase = .focus
         remainingSeconds = focusDurationSeconds
+        clearPersistedState()
     }
 
     // MARK: - 内部逻辑
@@ -128,13 +134,87 @@ final class PomodoroViewModel: ObservableObject {
     }
 
     private func endLiveActivity() {
-        guard let current = activity else { return }
-        activity = nil
+        endAllActivities()
+    }
 
-        let state = PomodoroAttributes.ContentState(endDate: Date(), phase: phase)
-        let content = ActivityContent(state: state, staleDate: Date())
-        Task {
-            await current.end(content, dismissalPolicy: .immediate)
+    /// 结束本类型的所有实时活动（包括上次进程遗留的残留活动）。
+    private func endAllActivities() {
+        for leftover in Activity<PomodoroAttributes>.activities {
+            let state = PomodoroAttributes.ContentState(endDate: Date(), phase: phase)
+            let content = ActivityContent(state: state, staleDate: Date())
+            Task {
+                await leftover.end(content, dismissalPolicy: .immediate)
+            }
+        }
+        activity = nil
+    }
+
+    // MARK: - 状态持久化与恢复
+
+    private enum PersistedKey {
+        static let isRunning = "pomodoro.isRunning"
+        static let endDate = "pomodoro.endDate"
+        static let phaseRawValue = "pomodoro.phaseRawValue"
+    }
+
+    /// 将当前计时状态写入 UserDefaults，供 App 被杀后恢复。
+    private func persistRunningState() {
+        let defaults = UserDefaults.standard
+        defaults.set(isRunning, forKey: PersistedKey.isRunning)
+        if let endDate {
+            defaults.set(endDate, forKey: PersistedKey.endDate)
+        } else {
+            defaults.removeObject(forKey: PersistedKey.endDate)
+        }
+        defaults.set(phase.rawValue, forKey: PersistedKey.phaseRawValue)
+    }
+
+    private func clearPersistedState() {
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: PersistedKey.isRunning)
+        defaults.removeObject(forKey: PersistedKey.endDate)
+        defaults.removeObject(forKey: PersistedKey.phaseRawValue)
+    }
+
+    /// 启动时调用：清理或恢复遗留的实时活动，
+    /// 避免「强制退出 App 后灵动岛仍残留倒计时」的问题。
+    private func restoreIfNeeded() {
+        let defaults = UserDefaults.standard
+        let leftovers = Activity<PomodoroAttributes>.activities
+        let storedIsRunning = defaults.bool(forKey: PersistedKey.isRunning)
+        let storedEndDate = defaults.object(forKey: PersistedKey.endDate) as? Date
+
+        if storedIsRunning, let storedEndDate {
+            if storedEndDate > Date() {
+                // 计时仍在进行：恢复应用内计时，与灵动岛保持一致。
+                phase = PomodoroPhase(
+                    rawValue: defaults.string(forKey: PersistedKey.phaseRawValue) ?? ""
+                ) ?? .focus
+                endDate = storedEndDate
+                remainingSeconds = max(1, Int(storedEndDate.timeIntervalSinceNow.rounded(.up)))
+                isRunning = true
+
+                startTimer()
+                if leftovers.isEmpty {
+                    // 例如重启手机后系统清除了实时活动，需要重新创建。
+                    startLiveActivity()
+                }
+                NotificationService.shared.schedulePomodoroNotification(
+                    after: TimeInterval(remainingSeconds),
+                    phaseTitle: phase.title
+                )
+                persistRunningState()
+            } else {
+                // 计时在 App 被杀期间已结束：结束残留活动并复位。
+                endAllActivities()
+                isRunning = false
+                endDate = nil
+                remainingSeconds = duration(for: phase)
+                clearPersistedState()
+            }
+        } else {
+            // 没有运行中的计时：清理所有残留活动。
+            endAllActivities()
         }
     }
 }

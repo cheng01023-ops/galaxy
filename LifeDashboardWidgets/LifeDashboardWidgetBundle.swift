@@ -22,24 +22,29 @@ struct PomodoroLiveActivity: Widget {
                 .activitySystemActionForegroundColor(.white)
         } dynamicIsland: { context in
             DynamicIsland {
+                // 展开态只保留「图标 + 倒计时」单行内容，把尺寸压到最小。
                 DynamicIslandExpandedRegion(.center) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 6) {
                         Image(systemName: context.state.phase.systemImage)
+                            .font(.caption)
                             .foregroundStyle(.yellow)
-                        Text(context.state.phase.title)
-                        Spacer()
                         Text(timerInterval: Date.now...context.state.endDate, countsDown: true)
-                            .font(.system(.title2, design: .rounded).weight(.bold))
+                            .font(.system(.subheadline, design: .rounded).weight(.semibold))
                             .monospacedDigit()
+                            .lineLimit(1)
                     }
                 }
             } compactLeading: {
                 Image(systemName: context.state.phase.systemImage)
+                    .font(.system(size: 12))
             } compactTrailing: {
                 Text(timerInterval: Date.now...context.state.endDate, countsDown: true)
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
                     .monospacedDigit()
+                    .lineLimit(1)
             } minimal: {
                 Image(systemName: context.state.phase.systemImage)
+                    .font(.system(size: 12))
             }
         }
     }
