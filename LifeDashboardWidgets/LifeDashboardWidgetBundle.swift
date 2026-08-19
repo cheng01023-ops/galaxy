@@ -20,23 +20,31 @@ struct PomodoroLiveActivity: Widget {
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.center) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 4) {
                         Image(systemName: context.state.phase.systemImage)
+                            .font(.caption)
                             .foregroundStyle(.yellow)
                         Text(context.state.phase.title)
-                        Spacer()
+                            .font(.caption)
+                            .lineLimit(1)
+                        Spacer(minLength: 4)
                         Text(timerInterval: Date.now...context.state.endDate, countsDown: true)
-                            .font(.system(.title2, design: .rounded).weight(.bold))
+                            .font(.system(.subheadline, design: .rounded).weight(.semibold))
                             .monospacedDigit()
+                            .lineLimit(1)
                     }
+                    .padding(.horizontal, 2)
                 }
             } compactLeading: {
                 Image(systemName: context.state.phase.systemImage)
+                    .font(.system(size: 12))
             } compactTrailing: {
                 Text(timerInterval: Date.now...context.state.endDate, countsDown: true)
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
                     .monospacedDigit()
             } minimal: {
                 Image(systemName: context.state.phase.systemImage)
+                    .font(.system(size: 12))
             }
         }
     }
