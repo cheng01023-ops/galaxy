@@ -36,6 +36,11 @@ struct TodoListView: View {
         }
     }
 
+    /// 未完成数量。
+    private var activeCount: Int {
+        todos.filter { !$0.isCompleted }.count
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -72,6 +77,11 @@ struct TodoListView: View {
             }
             .navigationTitle("待办")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Text("未完成 \(activeCount)")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         isShowingAdd = true
