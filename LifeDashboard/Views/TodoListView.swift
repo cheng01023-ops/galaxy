@@ -1,13 +1,21 @@
 import SwiftUI
 import SwiftData
 
-/// 待办清单：支持按优先级排序、滑动删除、点击切换完成状态。
+/// 待办清单筛选状态。
+enum TodoFilter: String, CaseIterable {
+    case all = "全部"
+    case active = "未完成"
+    case completed = "已完成"
+}
+
+/// 待办清单：支持按优先级排序、按状态筛选、滑动删除、点击切换完成状态。
 struct TodoListView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \TodoItem.createdAt, order: .reverse) private var todos: [TodoItem]
 
     @State private var isShowingAdd = false
     @State private var editingTodo: TodoItem?
+    @State private var filter: TodoFilter = .all
 
     /// 按优先级（高 > 中 > 低）排序，同优先级按创建时间倒序。
     private var sortedTodos: [TodoItem] {
@@ -19,27 +27,47 @@ struct TodoListView: View {
         }
     }
 
+    /// 根据当前筛选条件过滤待办。
+    private var filteredTodos: [TodoItem] {
+        switch filter {
+        case .all: return sortedTodos
+        case .active: return sortedTodos.filter { !$0.isCompleted }
+        case .completed: return sortedTodos.filter { $0.isCompleted }
+        }
+    }
+
     var body: some View {
         NavigationStack {
-            Group {
-                if sortedTodos.isEmpty {
-                    ContentUnavailableView(
-                        "暂无待办",
-                        systemImage: "checklist",
-                        description: Text("点击右上角加号添加一条待办")
-                    )
-                } else {
-                    List {
-                        ForEach(sortedTodos) { todo in
-                            TodoRow(todo: todo)
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    editingTodo = todo
-                                }
-                        }
-                        .onDelete(perform: delete)
+            VStack(spacing: 0) {
+                Picker("筛选", selection: $filter) {
+                    ForEach(TodoFilter.allCases, id: \.self) { item in
+                        Text(item.rawValue).tag(item)
                     }
-                    .listStyle(.insetGrouped)
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+                .padding(.bottom, 8)
+
+                Group {
+                    if filteredTodos.isEmpty {
+                        ContentUnavailableView(
+                            "暂无待办",
+                            systemImage: "checklist",
+                            description: Text("点击右上角加号添加一条待办")
+                        )
+                    } else {
+                        List {
+                            ForEach(filteredTodos) { todo in
+                                TodoRow(todo: todo)
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        editingTodo = todo
+                                    }
+                            }
+                            .onDelete(perform: delete)
+                        }
+                        .listStyle(.insetGrouped)
+                    }
                 }
             }
             .navigationTitle("待办")
@@ -63,7 +91,7 @@ struct TodoListView: View {
 
     private func delete(at offsets: IndexSet) {
         for index in offsets {
-            modelContext.delete(sortedTodos[index])
+            modelContext.delete(filteredTodos[index])
         }
     }
 }
