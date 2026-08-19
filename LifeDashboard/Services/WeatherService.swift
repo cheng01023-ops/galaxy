@@ -102,14 +102,24 @@ final class WeatherService: ObservableObject {
 
     private func fetchOpenMeteo() async {
         do {
-            let snapshot = try await OpenMeteoClient.shared.fetchWeather(city: city, forecastDays: 1)
+            let snapshot = try await OpenMeteoClient.shared.fetchWeather(city: city, forecastDays: 7)
             weather = WeatherData(
                 city: snapshot.city,
                 temperature: snapshot.temperature,
+                feelsLike: snapshot.feelsLike,
                 conditionID: snapshot.conditionID,
                 condition: snapshot.conditionText,
                 high: snapshot.high,
-                low: snapshot.low
+                low: snapshot.low,
+                weatherCode: snapshot.weatherCode,
+                humidity: snapshot.humidity,
+                windSpeed: snapshot.windSpeed,
+                pressure: snapshot.pressure,
+                precipitationProbability: snapshot.precipitationProbability,
+                sunrise: snapshot.sunrise,
+                sunset: snapshot.sunset,
+                hourly: snapshot.hourly,
+                daily: snapshot.days
             )
             errorMessage = nil
         } catch {
