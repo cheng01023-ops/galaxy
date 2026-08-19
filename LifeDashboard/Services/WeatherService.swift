@@ -9,16 +9,51 @@ final class WeatherService: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
+    /// 当前选中的地区（城市查询关键字）。
+    @Published private(set) var city: String
+
+    /// 内置的常用地区列表，用户可在天气卡片中直接切换。
+    static let supportedRegions: [WeatherRegion] = [
+        WeatherRegion(name: "上海", query: "Shanghai"),
+        WeatherRegion(name: "北京", query: "Beijing"),
+        WeatherRegion(name: "广州", query: "Guangzhou"),
+        WeatherRegion(name: "深圳", query: "Shenzhen"),
+        WeatherRegion(name: "成都", query: "Chengdu"),
+        WeatherRegion(name: "杭州", query: "Hangzhou"),
+        WeatherRegion(name: "武汉", query: "Wuhan"),
+        WeatherRegion(name: "南京", query: "Nanjing"),
+        WeatherRegion(name: "西安", query: "Xi'an"),
+        WeatherRegion(name: "重庆", query: "Chongqing")
+    ]
+
+    private static let cityDefaultsKey = "weather.selectedCity"
+
     // TODO: 填入你的 OpenWeatherMap API Key（可选）
     // 申请地址：https://home.openweathermap.org/api_keys
     // 留空时应用会自动使用无需 Key 的 Open-Meteo 数据源。
     private let apiKey = ""
 
-    /// 默认城市，可在 UI 中扩展为可配置。
-    let city: String
-
     init(city: String = "Shanghai") {
-        self.city = city
+        let saved = UserDefaults.standard.string(forKey: Self.cityDefaultsKey)
+        if let saved, !saved.isEmpty {
+            self.city = saved
+        } else {
+            self.city = city
+        }
+    }
+
+    /// 切换地区并刷新天气。
+    func selectRegion(_ region: WeatherRegion) {
+        setCity(region.query)
+    }
+
+    /// 设置为自定义城市并刷新天气。
+    func setCity(_ newCity: String) {
+        let trimmed = newCity.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, trimmed != city else { return }
+        city = trimmed
+        UserDefaults.standard.set(trimmed, forKey: Self.cityDefaultsKey)
+        Task { await fetchWeather() }
     }
 
     /// 获取当前天气。
