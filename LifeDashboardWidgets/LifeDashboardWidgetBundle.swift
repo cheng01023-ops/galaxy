@@ -329,14 +329,14 @@ private struct YearProgressView: View {
 
 // MARK: - 每日一句小组件
 
-/// 每日一句小组件：每小时轮换一句温暖的话。
+/// 每日一句小组件：每天凌晨 00:00 联网更新一句温暖的话。
 struct GalaxyQuoteWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "GalaxyQuoteWidget", provider: QuoteTimelineProvider()) { entry in
             QuoteWidgetView(entry: entry)
         }
         .configurationDisplayName("Galaxy 每日一句")
-        .description("每小时轮换一句温暖的话。")
+        .description("每天凌晨 00:00 联网更新一句温暖的话。")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }
@@ -346,8 +346,11 @@ struct MotivationalQuote: Hashable {
     let author: String
 }
 
+// MARK: - 精选语录库（离线兜底）
+
 enum QuoteLibrary {
-    static let all: [MotivationalQuote] = [
+    /// 励志
+    static let motivation: [MotivationalQuote] = [
         MotivationalQuote(text: "千里之行，始于足下。", author: "老子"),
         MotivationalQuote(text: "种一棵树最好的时间是十年前，其次是现在。", author: "谚语"),
         MotivationalQuote(text: "星光不问赶路人，时光不负有心人。", author: "佚名"),
@@ -355,8 +358,140 @@ enum QuoteLibrary {
         MotivationalQuote(text: "日拱一卒，功不唐捐。", author: "胡适"),
         MotivationalQuote(text: "所有的美好，都值得等待。", author: "佚名"),
         MotivationalQuote(text: "慢慢来，比较快。", author: "佚名"),
-        MotivationalQuote(text: "热爱可抵岁月漫长。", author: "佚名")
+        MotivationalQuote(text: "热爱可抵岁月漫长。", author: "佚名"),
+        MotivationalQuote(text: "行动是治愈恐惧的良药，而犹豫拖延将不断滋养恐惧。", author: "佚名"),
+        MotivationalQuote(text: "把每一天都当作生命中的最后一天来过。", author: "史蒂夫·乔布斯"),
+        MotivationalQuote(text: "成功不是终点，失败也不是末日，重要的是继续前行的勇气。", author: "温斯顿·丘吉尔"),
+        MotivationalQuote(text: "你现在的努力，是为了将来拥有更多选择的权利。", author: "佚名"),
+        MotivationalQuote(text: "不积跬步，无以至千里；不积小流，无以成江海。", author: "荀子"),
+        MotivationalQuote(text: "只要路是对的，就不怕路远。", author: "佚名"),
+        MotivationalQuote(text: "逆风的方向，更适合飞翔。", author: "佚名"),
+        MotivationalQuote(text: "世上无难事，只怕有心人。", author: "谚语")
     ]
+
+    /// 诗词
+    static let poetry: [MotivationalQuote] = [
+        MotivationalQuote(text: "会当凌绝顶，一览众山小。", author: "杜甫"),
+        MotivationalQuote(text: "长风破浪会有时，直挂云帆济沧海。", author: "李白"),
+        MotivationalQuote(text: "海内存知己，天涯若比邻。", author: "王勃"),
+        MotivationalQuote(text: "沉舟侧畔千帆过，病树前头万木春。", author: "刘禹锡"),
+        MotivationalQuote(text: "山重水复疑无路，柳暗花明又一村。", author: "陆游"),
+        MotivationalQuote(text: "天生我材必有用，千金散尽还复来。", author: "李白"),
+        MotivationalQuote(text: "千磨万击还坚劲，任尔东西南北风。", author: "郑燮"),
+        MotivationalQuote(text: "莫愁前路无知己，天下谁人不识君。", author: "高适"),
+        MotivationalQuote(text: "纸上得来终觉浅，绝知此事要躬行。", author: "陆游"),
+        MotivationalQuote(text: "不畏浮云遮望眼，自缘身在最高层。", author: "王安石"),
+        MotivationalQuote(text: "宝剑锋从磨砺出，梅花香自苦寒来。", author: "《警世贤文》"),
+        MotivationalQuote(text: "路漫漫其修远兮，吾将上下而求索。", author: "屈原")
+    ]
+
+    /// 生活
+    static let life: [MotivationalQuote] = [
+        MotivationalQuote(text: "生活明朗，万物可爱。", author: "佚名"),
+        MotivationalQuote(text: "人间值得，未来可期。", author: "佚名"),
+        MotivationalQuote(text: "心之所向，素履以往。", author: "佚名"),
+        MotivationalQuote(text: "愿所有美好，如期而至。", author: "佚名"),
+        MotivationalQuote(text: "简单生活，快乐至上。", author: "佚名"),
+        MotivationalQuote(text: "且将新火试新茶，诗酒趁年华。", author: "苏轼"),
+        MotivationalQuote(text: "一花一世界，一叶一菩提。", author: "《华严经》"),
+        MotivationalQuote(text: "世界以痛吻我，我要报之以歌。", author: "泰戈尔")
+    ]
+
+    /// 成长
+    static let growth: [MotivationalQuote] = [
+        MotivationalQuote(text: "学而不思则罔，思而不学则殆。", author: "孔子"),
+        MotivationalQuote(text: "温故而知新，可以为师矣。", author: "孔子"),
+        MotivationalQuote(text: "书山有路勤为径，学海无涯苦作舟。", author: "韩愈"),
+        MotivationalQuote(text: "知之者不如好之者，好之者不如乐之者。", author: "孔子"),
+        MotivationalQuote(text: "三人行，必有我师焉。", author: "孔子"),
+        MotivationalQuote(text: "锲而不舍，金石可镂。", author: "荀子"),
+        MotivationalQuote(text: "业精于勤，荒于嬉；行成于思，毁于随。", author: "韩愈")
+    ]
+
+    /// 全部精选（43 条）
+    static let all: [MotivationalQuote] = motivation + poetry + life + growth
+
+    /// 按日期确定性地挑选一条本地金句，保证同一天展示相同内容。
+    static func quote(for date: Date) -> MotivationalQuote {
+        let day = Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 0
+        return all[day % all.count]
+    }
+}
+
+// MARK: - 互联网语录源
+
+enum QuoteError: Error {
+    case empty
+}
+
+/// 从公开语录接口拉取当日金句；多个源依次尝试，全部失败返回 nil。
+enum QuoteClient {
+    static func fetchDailyQuote() async -> MotivationalQuote? {
+        // 一言：哲学 → 诗词 → 文学
+        for category in ["k", "i", "d"] {
+            if let quote = try? await fetchHitokoto(category: category) {
+                return quote
+            }
+        }
+        // 今日诗词
+        if let quote = try? await fetchJinrishici() {
+            return quote
+        }
+        return nil
+    }
+
+    private static func fetchHitokoto(category: String) async throws -> MotivationalQuote {
+        var components = URLComponents(string: "https://v1.hitokoto.cn/")
+        components?.queryItems = [
+            URLQueryItem(name: "c", value: category),
+            URLQueryItem(name: "encode", value: "json"),
+            URLQueryItem(name: "max_length", value: "60")
+        ]
+        guard let url = components?.url else { throw URLError(.badURL) }
+        let response = try JSONDecoder().decode(HitokotoResponse.self, from: try await data(from: url))
+        let text = response.hitokoto.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { throw QuoteError.empty }
+        let author = (response.fromWho ?? response.from ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return MotivationalQuote(text: text, author: author.isEmpty ? "一言" : author)
+    }
+
+    private static func fetchJinrishici() async throws -> MotivationalQuote {
+        guard let url = URL(string: "https://v1.jinrishici.com/all.json") else { throw URLError(.badURL) }
+        let response = try JSONDecoder().decode(JinrishiciResponse.self, from: try await data(from: url))
+        let text = response.content.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else { throw QuoteError.empty }
+        let author = (response.author ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let origin = (response.origin ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let authorText = !author.isEmpty ? author : (!origin.isEmpty ? origin : "今日诗词")
+        return MotivationalQuote(text: text, author: authorText)
+    }
+
+    /// 带超时的请求，避免拖慢小组件刷新。
+    private static func data(from url: URL) async throws -> Data {
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 8
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return data
+    }
+}
+
+private struct HitokotoResponse: Decodable {
+    let hitokoto: String
+    let from: String?
+    let fromWho: String?
+
+    enum CodingKeys: String, CodingKey {
+        case hitokoto
+        case from
+        case fromWho = "from_who"
+    }
+}
+
+private struct JinrishiciResponse: Decodable {
+    let content: String
+    let origin: String?
+    let author: String?
 }
 
 struct QuoteEntry: TimelineEntry {
@@ -366,30 +501,37 @@ struct QuoteEntry: TimelineEntry {
 
 struct QuoteTimelineProvider: TimelineProvider {
     func placeholder(in context: Context) -> QuoteEntry {
-        QuoteEntry(date: .now, quote: QuoteLibrary.all[0])
+        QuoteEntry(date: .now, quote: QuoteLibrary.quote(for: .now))
     }
 
     func getSnapshot(in context: Context, completion: @escaping (QuoteEntry) -> Void) {
-        completion(QuoteEntry(date: .now, quote: quote(for: .now)))
+        if context.isPreview {
+            completion(QuoteEntry(date: .now, quote: QuoteLibrary.quote(for: .now)))
+            return
+        }
+        Task {
+            let quote = await QuoteClient.fetchDailyQuote() ?? QuoteLibrary.quote(for: .now)
+            completion(QuoteEntry(date: .now, quote: quote))
+        }
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<QuoteEntry>) -> Void) {
-        // 未来 24 小时，每小时一条
-        let calendar = Calendar.current
-        let start = calendar.date(bySettingHour: 0, minute: 0, second: 0, of: .now) ?? .now
-        var entries: [QuoteEntry] = []
-        for hour in 0..<24 {
-            guard let date = calendar.date(byAdding: .hour, value: hour, to: start) else { continue }
-            entries.append(QuoteEntry(date: date, quote: quote(for: date)))
-        }
-        let nextDay = calendar.date(byAdding: .day, value: 1, to: start) ?? .now.addingTimeInterval(86400)
-        completion(Timeline(entries: entries, policy: .after(nextDay)))
-    }
+        Task {
+            let calendar = Calendar.current
+            // 次日凌晨 00:00：到点后系统会唤醒小组件，拉取新一天的句子
+            let tomorrow = calendar.date(byAdding: .day, value: 1, to: .now) ?? .now.addingTimeInterval(86400)
+            let nextMidnight = calendar.startOfDay(for: tomorrow)
 
-    private func quote(for date: Date) -> MotivationalQuote {
-        let day = Calendar.current.ordinality(of: .day, in: .era, for: date) ?? 0
-        let list = QuoteLibrary.all
-        return list[day % list.count]
+            if let quote = await QuoteClient.fetchDailyQuote() {
+                let entry = QuoteEntry(date: .now, quote: quote)
+                completion(Timeline(entries: [entry], policy: .after(nextMidnight)))
+            } else {
+                // 联网失败：先用本地精选展示，30 分钟后重试
+                let entry = QuoteEntry(date: .now, quote: QuoteLibrary.quote(for: .now))
+                let retry = calendar.date(byAdding: .minute, value: 30, to: .now) ?? .now.addingTimeInterval(1800)
+                completion(Timeline(entries: [entry], policy: .after(retry)))
+            }
+        }
     }
 }
 
