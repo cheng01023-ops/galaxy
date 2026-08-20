@@ -43,6 +43,8 @@ struct DashboardView: View {
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12)
     ]
+    /// 半宽小卡片统一高度，和天气卡片保持一致。
+    private let halfCardHeight: CGFloat = 240
 
     private static let layoutKey = "dashboard.layout.v3"
 
@@ -69,6 +71,7 @@ struct DashboardView: View {
                     ForEach(layout) { item in
                         cardView(for: item.kind)
                             .gridCellColumns(item.size == .full ? 2 : 1)
+                            .frame(height: item.size == .half ? halfCardHeight : nil, alignment: .topLeading)
                             .disabled(isEditing)
                             .overlay(alignment: .topTrailing) {
                                 if isEditing {
