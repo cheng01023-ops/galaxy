@@ -29,18 +29,13 @@ struct DashboardLayoutItem: Codable, Identifiable {
     var id: String { kind.rawValue }
 }
 
-/// 仪表盘：自由画布布局，编辑时可拖动卡片位置、拖动右下角箭头调整大小。
+/// 仪表盘：自由画布布局，编辑时可拖动卡片、拖动右下角箭头调整大小。
 struct DashboardView: View {
     @EnvironmentObject private var healthService: HealthService
     @EnvironmentObject private var weatherService: WeatherService
 
     @State private var layout: [DashboardLayoutItem]
     @State private var isEditing = false
-
-    @State private var movingItemID: String?
-    @State private var moveStartPoint: CGPoint = .zero
-    @State private var resizingItemID: String?
-    @State private var resizeStartSize: CGSize = .zero
 
     private static let layoutKey = "dashboard.layout.v2"
     private let minCardWidth: CGFloat = 120
@@ -64,27 +59,17 @@ struct DashboardView: View {
 
                 ScrollView {
                     ZStack(alignment: .topLeading) {
-                        ForEach(layout) { item in
-                            cardView(for: item.kind)
-                                .frame(width: item.width, height: item.height, alignment: .topLeading)
-                                .clipped()
-                                .offset(x: item.x, y: item.y)
-                                .overlay {
-                                    if isEditing {
-                                        ZStack(alignment: .topTrailing) {
-                                            Color.clear
-                                                .contentShape(Rectangle())
-                                                .gesture(moveGesture(for: item, canvasWidth: canvasWidth))
-                                            moveHint(for: item)
-                                                .allowsHitTesting(false)
-                                        }
-                                    }
-                                }
-                                .overlay(alignment: .bottomTrailing) {
-                                    if isEditing {
-                                        resizeHandle(for: item, canvasWidth: canvasWidth)
-                                    }
-                                }
+                        ForEach($layout) { itemBinding in
+                            let item = itemBinding.wrappedValue
+                            EditableDashboardCard(
+                                item: itemBinding,
+                                isEditing: isEditing,
+                                canvasWidth: canvasWidth,
+                                minCardWidth: minCardWidth,
+                                minCardHeight: minCardHeight
+                            ) {
+                                cardView(for: item.kind)
+                            }
                         }
                     }
                     .frame(width: canvasWidth, height: canvasHeight, alignment: .topLeading)
@@ -128,75 +113,7 @@ struct DashboardView: View {
         }
     }
 
-    // MARK: - 编辑控件
-
-    @ViewBuilder
-    private func moveHint(for item: DashboardLayoutItem) -> some View {
-        Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
-            .font(.caption.weight(.bold))
-            .padding(7)
-            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .padding(8)
-    }
-
-    @ViewBuilder
-    private func resizeHandle(for item: DashboardLayoutItem, canvasWidth: CGFloat) -> some View {
-        Image(systemName: "arrow.up.left.and.arrow.down.right")
-            .font(.system(size: 14, weight: .bold))
-            .padding(9)
-            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-            .contentShape(Rectangle())
-            .gesture(resizeGesture(for: item, canvasWidth: canvasWidth))
-            .padding(8)
-    }
-
-    // MARK: - 手势
-
-    private func moveGesture(for item: DashboardLayoutItem, canvasWidth: CGFloat) -> some Gesture {
-        DragGesture(minimumDistance: 1)
-            .onChanged { value in
-                if movingItemID != item.id {
-                    movingItemID = item.id
-                    moveStartPoint = CGPoint(x: item.x, y: item.y)
-                }
-                guard let index = index(of: item) else { return }
-                let maxX = max(0, canvasWidth - item.width)
-                let newX = min(max(0, moveStartPoint.x + value.translation.width), maxX)
-                let newY = max(0, moveStartPoint.y + value.translation.height)
-                layout[index].x = Double(newX)
-                layout[index].y = Double(newY)
-            }
-            .onEnded { _ in
-                movingItemID = nil
-                saveLayout()
-            }
-    }
-
-    private func resizeGesture(for item: DashboardLayoutItem, canvasWidth: CGFloat) -> some Gesture {
-        DragGesture(minimumDistance: 1)
-            .onChanged { value in
-                if resizingItemID != item.id {
-                    resizingItemID = item.id
-                    resizeStartSize = CGSize(width: item.width, height: item.height)
-                }
-                guard let index = index(of: item) else { return }
-                let maxWidth = max(minCardWidth, canvasWidth - item.x)
-                let newWidth = min(max(minCardWidth, resizeStartSize.width + value.translation.width), maxWidth)
-                let newHeight = max(minCardHeight, resizeStartSize.height + value.translation.height)
-                layout[index].width = Double(newWidth)
-                layout[index].height = Double(newHeight)
-            }
-            .onEnded { _ in
-                resizingItemID = nil
-                saveLayout()
-            }
-    }
-
     // MARK: - 布局工具
-
-    private func index(of item: DashboardLayoutItem) -> Int? {
-        layout.firstIndex(where: { $0.id == item.id })
-    }
 
     private func saveLayout() {
         guard let data = try? JSONEncoder().encode(layout) else { return }
@@ -219,5 +136,83 @@ struct DashboardView: View {
     private func refresh() async {
         await healthService.requestAuthorizationAndFetch()
         await weatherService.fetchWeather()
+    }
+}
+
+// MARK: - 可编辑卡片容器
+
+private struct EditableDashboardCard<Content: View>: View {
+    @Binding var item: DashboardLayoutItem
+    let isEditing: Bool
+    let canvasWidth: CGFloat
+    let minCardWidth: CGFloat
+    let minCardHeight: CGFloat
+    @ViewBuilder let content: () -> Content
+
+    @GestureState private var moveTranslation: CGSize = .zero
+    @GestureState private var resizeTranslation: CGSize = .zero
+
+    var body: some View {
+        content()
+            .frame(width: liveWidth, height: liveHeight, alignment: .topLeading)
+            .clipped()
+            .offset(x: item.x + moveTranslation.width, y: item.y + moveTranslation.height)
+            .overlay {
+                if isEditing {
+                    ZStack(alignment: .topTrailing) {
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .gesture(moveGesture)
+                        Image(systemName: "arrow.up.and.down.and.arrow.left.and.right")
+                            .font(.caption.weight(.bold))
+                            .padding(7)
+                            .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                            .allowsHitTesting(false)
+                    }
+                }
+            }
+            .overlay(alignment: .bottomTrailing) {
+                if isEditing {
+                    Image(systemName: "arrow.up.left.and.arrow.down.right")
+                        .font(.system(size: 14, weight: .bold))
+                        .padding(9)
+                        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .contentShape(Rectangle())
+                        .gesture(resizeGesture)
+                        .padding(8)
+                }
+            }
+    }
+
+    private var liveWidth: CGFloat {
+        item.width + (isEditing ? resizeTranslation.width : 0)
+    }
+
+    private var liveHeight: CGFloat {
+        item.height + (isEditing ? resizeTranslation.height : 0)
+    }
+
+    private var moveGesture: some Gesture {
+        DragGesture(minimumDistance: 1)
+            .updating($moveTranslation) { value, state, _ in
+                state = value.translation
+            }
+            .onEnded { value in
+                let maxX = max(0, canvasWidth - item.width)
+                item.x = Double(min(max(0, item.x + value.translation.width), maxX))
+                item.y = Double(max(0, item.y + value.translation.height))
+            }
+    }
+
+    private var resizeGesture: some Gesture {
+        DragGesture(minimumDistance: 1)
+            .updating($resizeTranslation) { value, state, _ in
+                state = value.translation
+            }
+            .onEnded { value in
+                let maxWidth = max(minCardWidth, canvasWidth - item.x)
+                item.width = Double(min(max(minCardWidth, item.width + value.translation.width), maxWidth))
+                item.height = Double(max(minCardHeight, item.height + value.translation.height))
+            }
     }
 }
