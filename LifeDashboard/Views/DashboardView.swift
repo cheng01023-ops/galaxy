@@ -6,6 +6,7 @@ enum DashboardCardKind: String, Codable, CaseIterable {
     case pomodoro
     case health
     case stepTrend
+    case water
 
     var title: String {
         switch self {
@@ -13,6 +14,7 @@ enum DashboardCardKind: String, Codable, CaseIterable {
         case .pomodoro: return "番茄钟"
         case .health: return "健康"
         case .stepTrend: return "近 7 天步数"
+        case .water: return "喝水提醒"
         }
     }
 }
@@ -52,6 +54,7 @@ struct DashboardView: View {
         DashboardLayoutItem(kind: .weather, size: .half),
         DashboardLayoutItem(kind: .pomodoro, size: .half),
         DashboardLayoutItem(kind: .health, size: .half),
+        DashboardLayoutItem(kind: .water, size: .half),
         DashboardLayoutItem(kind: .stepTrend, size: .full)
     ]
 
@@ -116,6 +119,8 @@ struct DashboardView: View {
             HealthSummaryCard()
         case .stepTrend:
             StepTrendCard()
+        case .water:
+            WaterReminderCard()
         }
     }
 
