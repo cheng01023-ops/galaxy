@@ -69,19 +69,22 @@ struct DashboardView: View {
                                 .frame(width: item.width, height: item.height, alignment: .topLeading)
                                 .clipped()
                                 .offset(x: item.x, y: item.y)
-                                .contentShape(Rectangle())
-                                .disabled(isEditing)
+                                .overlay {
+                                    if isEditing {
+                                        ZStack(alignment: .topTrailing) {
+                                            Color.clear
+                                                .contentShape(Rectangle())
+                                                .gesture(moveGesture(for: item, canvasWidth: canvasWidth))
+                                            moveHint(for: item)
+                                                .allowsHitTesting(false)
+                                        }
+                                    }
+                                }
                                 .overlay(alignment: .bottomTrailing) {
                                     if isEditing {
                                         resizeHandle(for: item, canvasWidth: canvasWidth)
                                     }
                                 }
-                                .overlay(alignment: .topTrailing) {
-                                    if isEditing {
-                                        moveHint(for: item)
-                                    }
-                                }
-                                .gesture(isEditing ? moveGesture(for: item, canvasWidth: canvasWidth) : nil)
                         }
                     }
                     .frame(width: canvasWidth, height: canvasHeight, alignment: .topLeading)
