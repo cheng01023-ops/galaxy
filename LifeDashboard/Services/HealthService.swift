@@ -7,6 +7,9 @@ import HealthKit
 final class HealthService: ObservableObject {
     @Published var summary = HealthSummary()
     @Published var last7DaysSteps: [DailySteps] = []
+    @Published var last7DaysSleep: [DailySleep] = []
+    @Published var sleepStages: [SleepStageBreakdown] = []
+    @Published var last7DaysHeartRate: [DailyHeartRate] = []
     @Published var weekSummary = WeekHealthSummary()
     @Published var isAuthorized = false
     @Published var errorMessage: String?
@@ -118,6 +121,82 @@ final class HealthService: ObservableObject {
         )
     }
 
+    // MARK: - 详情页数据
+
+    /// 刷新健康详情页所需的全部数据（睡眠趋势、睡眠阶段、心率趋势）。
+    func fetchDetailData() async {
+        guard isAuthorized, isHealthDataAvailable else { return }
+        await fetchSleepTrend(days: 7)
+        await fetchSleepStageBreakdown()
+        await fetchHeartRateTrend(days: 7)
+    }
+
+    /// 读取最近 n 天（含今天）的每日睡眠时长。
+    func fetchSleepTrend(days: Int = 7) async {
+        guard isAuthorized, isHealthDataAvailable else { return }
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        var result: [DailySleep] = []
+
+        for offset in stride(from: days - 1, through: 0, by: -1) {
+            guard let day = calendar.date(byAdding: .day, value: -offset, to: today) else { continue }
+            let nextDay = calendar.date(byAdding: .day, value: 1, to: day) ?? day
+            let seconds = (try? await fetchSleepDuration(from: day, to: nextDay)) ?? 0
+            result.append(DailySleep(date: day, hours: seconds / 3600.0))
+        }
+        last7DaysSleep = result
+    }
+
+    /// 读取昨晚各睡眠阶段时长（分钟），仅保留有数据的阶段。
+    func fetchSleepStageBreakdown() async {
+        guard isAuthorized, isHealthDataAvailable else { return }
+        let calendar = Calendar.current
+        let startOfToday = calendar.startOfDay(for: Date())
+        let startOfYesterday = calendar.date(byAdding: .day, value: -1, to: startOfToday) ?? startOfToday
+
+        let samples = (try? await fetchSleepSamples(from: startOfYesterday, to: startOfToday)) ?? []
+        var minutesByStage: [SleepStage: Double] = [:]
+
+        for sample in samples {
+            let duration = sample.endDate.timeIntervalSince(sample.startDate) / 60.0
+            guard duration > 0 else { continue }
+            switch sample.value {
+            case HKCategoryValueSleepAnalysis.asleepREM.rawValue:
+                minutesByStage[.rem, default: 0] += duration
+            case HKCategoryValueSleepAnalysis.asleepDeep.rawValue:
+                minutesByStage[.deep, default: 0] += duration
+            case HKCategoryValueSleepAnalysis.asleepCore.rawValue,
+                 HKCategoryValueSleepAnalysis.asleepUnspecified.rawValue:
+                minutesByStage[.core, default: 0] += duration
+            case HKCategoryValueSleepAnalysis.awake.rawValue:
+                minutesByStage[.awake, default: 0] += duration
+            default:
+                break
+            }
+        }
+
+        sleepStages = SleepStage.allCases.compactMap { stage in
+            guard let minutes = minutesByStage[stage], minutes > 0 else { return nil }
+            return SleepStageBreakdown(stage: stage, minutes: minutes)
+        }
+    }
+
+    /// 读取最近 n 天（含今天）每日静息心率（每天取最新一条）。
+    func fetchHeartRateTrend(days: Int = 7) async {
+        guard isAuthorized, isHealthDataAvailable else { return }
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        var result: [DailyHeartRate] = []
+
+        for offset in stride(from: days - 1, through: 0, by: -1) {
+            guard let day = calendar.date(byAdding: .day, value: -offset, to: today) else { continue }
+            let nextDay = calendar.date(byAdding: .day, value: 1, to: day) ?? day
+            let bpm = (try? await fetchRestingHeartRate(from: day, to: nextDay)) ?? 0
+            result.append(DailyHeartRate(date: day, bpm: bpm))
+        }
+        last7DaysHeartRate = result
+    }
+
     // MARK: - Private helpers
 
     private func fetchStepCount(from start: Date, to end: Date) async throws -> Double {
@@ -140,11 +219,17 @@ final class HealthService: ObservableObject {
         }
     }
 
-    private func fetchSleepDuration(from start: Date, to end: Date) async throws -> Double {
-        guard let type = HKCategoryType.categoryType(forIdentifier: .sleepAnalysis) else { return 0 }
+    /// 读取时间段内的原始睡眠样本。
+    private func fetchSleepSamples(from start: Date, to end: Date) async throws -> [HKCategorySample] {
+        guard let type = HKCategoryType.categoryType(forIdentifier: .sleepAnalysis) else { return [] }
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
         let sort = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
         let samples = try await fetchSamples(sampleType: type, predicate: predicate, sort: [sort], limit: 0)
+        return samples.compactMap { $0 as? HKCategorySample }
+    }
+
+    private func fetchSleepDuration(from start: Date, to end: Date) async throws -> Double {
+        let samples = try await fetchSleepSamples(from: start, to: end)
 
         // 仅统计真正的“睡着”阶段，排除卧床/清醒。
         let asleepValues: Set<Int> = [
@@ -155,15 +240,19 @@ final class HealthService: ObservableObject {
         ]
 
         return samples
-            .compactMap { $0 as? HKCategorySample }
             .filter { asleepValues.contains($0.value) }
             .reduce(0) { $0 + $1.endDate.timeIntervalSince($1.startDate) }
     }
 
-    private func fetchRestingHeartRate() async throws -> Double {
+    /// 读取指定时间段内最近一条静息心率；不传时间段时读取全部记录中的最近一条。
+    private func fetchRestingHeartRate(from start: Date? = nil, to end: Date? = nil) async throws -> Double {
         guard let type = HKQuantityType.quantityType(forIdentifier: .restingHeartRate) else { return 0 }
+        var predicate: NSPredicate?
+        if let start, let end {
+            predicate = HKQuery.predicateForSamples(withStart: start, end: end, options: .strictStartDate)
+        }
         let sort = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
-        let samples = try await fetchSamples(sampleType: type, predicate: nil, sort: [sort], limit: 1)
+        let samples = try await fetchSamples(sampleType: type, predicate: predicate, sort: [sort], limit: 1)
         guard let sample = samples.first as? HKQuantitySample else { return 0 }
         let unit = HKUnit.count().unitDivided(by: .minute())
         return sample.quantity.doubleValue(for: unit)
