@@ -1,14 +1,31 @@
 import SwiftUI
+import Charts
 
 /// 健康摘要卡片：今日步数、昨晚睡眠、静息心率。
+/// 点击整张卡片可进入健康详情页查看更丰富的数据。
 struct HealthSummaryCard: View {
     @EnvironmentObject private var healthService: HealthService
 
     var body: some View {
+        NavigationLink {
+            HealthDetailView()
+        } label: {
+            summaryContent
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var summaryContent: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("健康", systemImage: "heart.fill")
-                .font(.headline)
-                .foregroundStyle(.pink)
+            HStack {
+                Label("健康", systemImage: "heart.fill")
+                    .font(.headline)
+                    .foregroundStyle(.pink)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
 
             metricRow(icon: "figure.walk", label: "今日步数",
                       value: Formatters.number(healthService.summary.stepCount), unit: "步")
@@ -50,5 +67,404 @@ struct HealthSummaryCard: View {
                 }
             }
         }
+    }
+}
+
+/// 健康详情页：今日概览、步数目标、近 7 天步数/睡眠/心率趋势、
+/// 昨晚睡眠阶段明细与本周总结。
+struct HealthDetailView: View {
+    @EnvironmentObject private var healthService: HealthService
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 14) {
+                if !healthService.isHealthDataAvailable {
+                    placeholderCard(
+                        icon: "iphone.gen3.radiowaves.left.and.right",
+                        text: "模拟器无法读取 HealthKit\n请在真机上运行以查看健康详情"
+                    )
+                } else if let error = healthService.errorMessage, !healthService.summary.hasAnyData {
+                    placeholderCard(icon: "exclamationmark.triangle.fill", text: error)
+                } else {
+                    todayOverviewCard
+                    stepGoalCard
+                    stepTrendCard
+                    sleepStageCard
+                    sleepTrendCard
+                    heartRateTrendCard
+                    weekSummaryCard
+                }
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+        }
+        .background(Color(.systemGroupedBackground))
+        .navigationTitle("健康详情")
+        .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await loadDetailData()
+        }
+        .refreshable {
+            await loadDetailData()
+        }
+    }
+
+    private func loadDetailData() async {
+        if !healthService.isAuthorized {
+            await healthService.requestAuthorizationAndFetch()
+        }
+        await healthService.fetchDetailData()
+    }
+
+    // MARK: - 卡片
+
+    /// 今日三大指标概览。
+    private var todayOverviewCard: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            sectionHeader("今日概览", systemImage: "sun.max.fill", tint: .orange)
+
+            HStack(spacing: 12) {
+                overviewMetric(icon: "figure.walk", title: "步数",
+                               value: Formatters.number(healthService.summary.stepCount, maximumFractionDigits: 0),
+                               unit: "步")
+                Divider()
+                overviewMetric(icon: "moon.zzz.fill", title: "睡眠",
+                               value: Formatters.number(healthService.summary.sleepHours),
+                               unit: "小时")
+                Divider()
+                overviewMetric(icon: "heart.text.square.fill", title: "心率",
+                               value: Formatters.number(healthService.summary.restingHeartRate),
+                               unit: "次/分")
+            }
+        }
+        .cardStyle()
+    }
+
+    private func overviewMetric(icon: String, title: String, value: String, unit: String) -> some View {
+        VStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundStyle(.pink)
+            Text(value)
+                .font(.title3.weight(.semibold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+            Text("\(title) · \(unit)")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    /// 今日步数目标进度。
+    private var stepGoalCard: some View {
+        let steps = healthService.summary.stepCount
+        let goal = HealthSummary.dailyStepGoal
+        let progress = goal > 0 ? min(steps / goal, 1.0) : 0
+
+        return VStack(alignment: .leading, spacing: 12) {
+            sectionHeader("今日步数目标", systemImage: "flag.checkered", tint: .green)
+
+            ProgressView(value: progress)
+                .tint(.green)
+
+            HStack(alignment: .firstTextBaseline) {
+                Text("\(Formatters.number(steps, maximumFractionDigits: 0)) / \(Formatters.number(goal, maximumFractionDigits: 0)) 步")
+                Spacer()
+                Text(goalText)
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+        .cardStyle()
+    }
+
+    private var goalText: String {
+        let steps = healthService.summary.stepCount
+        let goal = HealthSummary.dailyStepGoal
+        if steps >= goal { return "已达成目标 🎉" }
+        return "还差 \(Formatters.number(goal - steps, maximumFractionDigits: 0)) 步"
+    }
+
+    /// 近 7 天步数柱状图（含日均参考线）。
+    private var stepTrendCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionHeader("近 7 天步数", systemImage: "chart.bar.fill", tint: .green)
+
+            if healthService.last7DaysSteps.isEmpty || !healthService.last7DaysSteps.contains(where: { $0.steps > 0 }) {
+                emptyText("暂无步数数据")
+            } else {
+                let average = healthService.last7DaysSteps.map(\.steps).reduce(0, +) / Double(healthService.last7DaysSteps.count)
+
+                Chart {
+                    ForEach(healthService.last7DaysSteps) { item in
+                        BarMark(
+                            x: .value("日期", item.date, unit: .day),
+                            y: .value("步数", item.steps)
+                        )
+                        .foregroundStyle(.green.opacity(0.85))
+                        .cornerRadius(4)
+                    }
+                    if average > 0 {
+                        RuleMark(y: .value("日均", average))
+                            .foregroundStyle(.secondary.opacity(0.6))
+                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                            .annotation(position: .top, alignment: .trailing) {
+                                Text("日均 \(Formatters.number(average, maximumFractionDigits: 0))")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                    }
+                }
+                .chartYAxis { AxisMarks(position: .leading) }
+                .chartXAxis {
+                    AxisMarks(values: .stride(by: .day)) { _ in
+                        AxisGridLine()
+                        AxisTick()
+                        AxisValueLabel(format: .dateTime.weekday(.narrow))
+                    }
+                }
+                .frame(height: 180)
+            }
+        }
+        .cardStyle()
+    }
+
+    /// 昨晚睡眠总时长与阶段明细。
+    private var sleepStageCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionHeader("昨晚睡眠", systemImage: "moon.zzz.fill", tint: .indigo)
+
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text(Formatters.number(healthService.summary.sleepHours))
+                    .font(.system(size: 34, weight: .bold, design: .rounded))
+                    .foregroundStyle(.indigo)
+                Text("小时")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+
+            if healthService.sleepStages.isEmpty {
+                emptyText("暂无睡眠阶段数据")
+            } else {
+                Chart(healthService.sleepStages) { item in
+                    BarMark(
+                        x: .value("阶段", item.stage.shortName),
+                        y: .value("时长", item.minutes)
+                    )
+                    .foregroundStyle(item.stage.color)
+                    .cornerRadius(4)
+                }
+                .chartYAxis { AxisMarks(position: .leading) }
+                .chartXAxis {
+                    AxisMarks { _ in
+                        AxisGridLine()
+                        AxisTick()
+                        AxisValueLabel()
+                    }
+                }
+                .frame(height: 160)
+
+                ForEach(healthService.sleepStages) { item in
+                    HStack(spacing: 8) {
+                        Circle()
+                            .fill(item.stage.color)
+                            .frame(width: 8, height: 8)
+                        Text(item.stage.rawValue)
+                            .font(.subheadline)
+                        Spacer()
+                        Text("\(Formatters.number(item.minutes, maximumFractionDigits: 0)) 分钟")
+                            .font(.subheadline.monospacedDigit())
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+        .cardStyle()
+    }
+
+    /// 近 7 天睡眠时长折线图。
+    private var sleepTrendCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionHeader("近 7 天睡眠", systemImage: "chart.xyaxis.line", tint: .indigo)
+
+            if healthService.last7DaysSleep.isEmpty || !healthService.last7DaysSleep.contains(where: { $0.hours > 0 }) {
+                emptyText("暂无睡眠数据")
+            } else {
+                Chart(healthService.last7DaysSleep) { item in
+                    LineMark(
+                        x: .value("日期", item.date, unit: .day),
+                        y: .value("小时", item.hours)
+                    )
+                    .interpolationMethod(.catmullRom)
+                    .foregroundStyle(.indigo)
+
+                    PointMark(
+                        x: .value("日期", item.date, unit: .day),
+                        y: .value("小时", item.hours)
+                    )
+                    .symbolSize(24)
+                    .foregroundStyle(.indigo)
+                }
+                .chartYAxis { AxisMarks(position: .leading) }
+                .chartXAxis {
+                    AxisMarks(values: .stride(by: .day)) { _ in
+                        AxisGridLine()
+                        AxisTick()
+                        AxisValueLabel(format: .dateTime.weekday(.narrow))
+                    }
+                }
+                .frame(height: 160)
+            }
+        }
+        .cardStyle()
+    }
+
+    /// 近 7 天静息心率折线图。
+    private var heartRateTrendCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionHeader("近 7 天静息心率", systemImage: "heart.fill", tint: .pink)
+
+            if healthService.last7DaysHeartRate.isEmpty || !healthService.last7DaysHeartRate.contains(where: { $0.bpm > 0 }) {
+                emptyText("暂无心率数据")
+            } else {
+                Chart(healthService.last7DaysHeartRate) { item in
+                    LineMark(
+                        x: .value("日期", item.date, unit: .day),
+                        y: .value("心率", item.bpm)
+                    )
+                    .interpolationMethod(.catmullRom)
+                    .foregroundStyle(.pink)
+
+                    PointMark(
+                        x: .value("日期", item.date, unit: .day),
+                        y: .value("心率", item.bpm)
+                    )
+                    .symbolSize(24)
+                    .foregroundStyle(.pink)
+                }
+                .chartYAxis { AxisMarks(position: .leading) }
+                .chartXAxis {
+                    AxisMarks(values: .stride(by: .day)) { _ in
+                        AxisGridLine()
+                        AxisTick()
+                        AxisValueLabel(format: .dateTime.weekday(.narrow))
+                    }
+                }
+                .frame(height: 160)
+            }
+        }
+        .cardStyle()
+    }
+
+    /// 本周总结：总步数与平均睡眠。
+    private var weekSummaryCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionHeader("本周总结", systemImage: "calendar", tint: .blue)
+
+            if healthService.weekSummary.totalSteps == 0 && healthService.weekSummary.averageSleepHours == 0 {
+                emptyText("本周暂无数据")
+            } else {
+                HStack(spacing: 12) {
+                    weekMetric(title: "总步数",
+                               value: Formatters.number(healthService.weekSummary.totalSteps, maximumFractionDigits: 0),
+                               unit: "步")
+                    Divider()
+                    weekMetric(title: "平均睡眠",
+                               value: Formatters.number(healthService.weekSummary.averageSleepHours),
+                               unit: "小时/天")
+                }
+
+                Text(weekRangeText)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .cardStyle()
+    }
+
+    private func weekMetric(title: String, value: String, unit: String) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            HStack(alignment: .firstTextBaseline, spacing: 2) {
+                Text(value)
+                    .font(.title2.weight(.semibold))
+                Text(unit)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var weekRangeText: String {
+        var calendar = Calendar.current
+        calendar.firstWeekday = 2 // 与 HealthService 保持一致，周一作为一周开始
+        guard let interval = calendar.dateInterval(of: .weekOfYear, for: Date()) else { return "" }
+        return Formatters.weekRangeText(start: interval.start, end: interval.end)
+    }
+
+    // MARK: - 通用小部件
+
+    private func sectionHeader(_ title: String, systemImage: String, tint: Color) -> some View {
+        Label(title, systemImage: systemImage)
+            .font(.headline)
+            .foregroundStyle(tint)
+    }
+
+    private func emptyText(_ text: String) -> some View {
+        Text(text)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, minHeight: 60)
+    }
+
+    private func placeholderCard(icon: String, text: String) -> some View {
+        VStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 40))
+                .foregroundStyle(.secondary)
+            Text(text)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 40)
+        .cardStyle()
+    }
+}
+
+// MARK: - SleepStage 展示扩展
+
+extension SleepStage {
+    /// 各睡眠阶段对应的主题色。
+    var color: Color {
+        switch self {
+        case .awake: return .orange
+        case .core: return .blue
+        case .deep: return .indigo
+        case .rem: return .purple
+        }
+    }
+
+    /// 图表坐标轴上使用的短名称。
+    var shortName: String {
+        switch self {
+        case .awake: return "清醒"
+        case .core: return "核心"
+        case .deep: return "深睡"
+        case .rem: return "REM"
+        }
+    }
+}
+
+#Preview("健康摘要卡片") {
+    NavigationStack {
+        HealthSummaryCard()
+            .environmentObject(HealthService())
+            .padding()
     }
 }
