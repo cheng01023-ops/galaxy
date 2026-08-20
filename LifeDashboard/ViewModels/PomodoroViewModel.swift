@@ -9,8 +9,9 @@ final class PomodoroViewModel: ObservableObject {
     @Published private(set) var remainingSeconds: Int
     @Published private(set) var isRunning = false
 
-    let focusDurationSeconds = 25 * 60
-    let restDurationSeconds = 5 * 60
+    /// 自定义倒计时时长（秒），可在详情页调整。
+    @Published var focusDurationSeconds: Int
+    @Published var restDurationSeconds: Int
 
     /// 当某个阶段完成时回调（用于把专注时长写入 SwiftData）。
     var onPhaseCompleted: ((PomodoroPhase, Int) -> Void)?
@@ -20,7 +21,23 @@ final class PomodoroViewModel: ObservableObject {
     private var activity: Activity<PomodoroAttributes>?
 
     init() {
-        remainingSeconds = focusDurationSeconds
+        let defaults = UserDefaults.standard
+        let focusMinutes: Int
+        if defaults.object(forKey: PersistedKey.focusMinutes) != nil {
+            focusMinutes = max(1, defaults.integer(forKey: PersistedKey.focusMinutes))
+        } else {
+            focusMinutes = 25
+        }
+        let restMinutes: Int
+        if defaults.object(forKey: PersistedKey.restMinutes) != nil {
+            restMinutes = max(1, defaults.integer(forKey: PersistedKey.restMinutes))
+        } else {
+            restMinutes = 5
+        }
+        let focusSeconds = focusMinutes * 60
+        focusDurationSeconds = focusSeconds
+        restDurationSeconds = restMinutes * 60
+        remainingSeconds = focusSeconds
         restoreIfNeeded()
     }
 
@@ -67,6 +84,24 @@ final class PomodoroViewModel: ObservableObject {
         phase = .focus
         remainingSeconds = focusDurationSeconds
         clearPersistedState()
+    }
+
+    /// 更新专注时长（分钟），非计时状态下同步刷新剩余时间。
+    func setFocusDuration(minutes: Int) {
+        focusDurationSeconds = max(1, minutes) * 60
+        if !isRunning, phase == .focus {
+            remainingSeconds = focusDurationSeconds
+        }
+        persistDurationSettings()
+    }
+
+    /// 更新休息时长（分钟），非计时状态下同步刷新剩余时间。
+    func setRestDuration(minutes: Int) {
+        restDurationSeconds = max(1, minutes) * 60
+        if !isRunning, phase == .rest {
+            remainingSeconds = restDurationSeconds
+        }
+        persistDurationSettings()
     }
 
     // MARK: - 内部逻辑
@@ -155,6 +190,8 @@ final class PomodoroViewModel: ObservableObject {
         static let isRunning = "pomodoro.isRunning"
         static let endDate = "pomodoro.endDate"
         static let phaseRawValue = "pomodoro.phaseRawValue"
+        static let focusMinutes = "pomodoro.focusMinutes"
+        static let restMinutes = "pomodoro.restMinutes"
     }
 
     /// 将当前计时状态写入 UserDefaults，供 App 被杀后恢复。
@@ -174,6 +211,13 @@ final class PomodoroViewModel: ObservableObject {
         defaults.removeObject(forKey: PersistedKey.isRunning)
         defaults.removeObject(forKey: PersistedKey.endDate)
         defaults.removeObject(forKey: PersistedKey.phaseRawValue)
+    }
+
+    /// 保存自定义的专注/休息时长（分钟），供下次启动时恢复。
+    private func persistDurationSettings() {
+        let defaults = UserDefaults.standard
+        defaults.set(focusDurationSeconds / 60, forKey: PersistedKey.focusMinutes)
+        defaults.set(restDurationSeconds / 60, forKey: PersistedKey.restMinutes)
     }
 
     /// 启动时调用：清理或恢复遗留的实时活动，
