@@ -1,9 +1,5 @@
 import SwiftUI
 
-enum Route: Hashable {
-    case day(Track, CourseDay)
-}
-
 struct HomeView: View {
     @EnvironmentObject private var store: AppStore
     @Binding var selectedTab: AppTab
@@ -21,12 +17,6 @@ struct HomeView: View {
             }
             .background(Color(uiColor: .systemGroupedBackground))
             .navigationTitle("C++ 七天学习")
-            .navigationDestination(for: Route.self) { route in
-                switch route {
-                case .day(let track, let day):
-                    DayView(track: track, day: day, store: store)
-                }
-            }
         }
     }
 
@@ -59,7 +49,7 @@ struct HomeView: View {
                 Spacer()
             }
 
-            NavigationLink(value: Route.day(store.track, nextDay)) {
+            NavigationLink { DayView(track: store.track, day: nextDay, store: store) } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "play.circle.fill")
                         .font(.title3)
@@ -86,7 +76,7 @@ struct HomeView: View {
 
             VStack(spacing: 0) {
                 ForEach(store.days()) { day in
-                    NavigationLink(value: Route.day(store.track, day)) {
+                    NavigationLink { DayView(track: store.track, day: day, store: store) } label: {
                         DayRow(day: day)
                     }
                     .buttonStyle(.plain)

@@ -44,7 +44,7 @@ struct DayView: View {
     @ViewBuilder
     private var footer: some View {
         if let previous = previousDay {
-            NavigationLink(value: Route.day(track, previous)) {
+            NavigationLink { DayView(track: track, day: previous, store: store) } label: {
                 HStack(spacing: 8) {
                     Image(systemName: "chevron.left")
                     Text("上一课：\(previous.title)")
@@ -58,7 +58,7 @@ struct DayView: View {
         }
 
         if let next = nextDay {
-            NavigationLink(value: Route.day(track, next)) {
+            NavigationLink { DayView(track: track, day: next, store: store) } label: {
                 HStack(spacing: 8) {
                     Spacer(minLength: 0)
                     Text("下一课：\(next.title) · \(next.subtitle)")
