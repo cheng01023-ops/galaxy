@@ -32,7 +32,7 @@ struct CppRootTabView: View {
 
 /// Galaxy 仪表盘「C++学习」卡片进入的完整学习板块。
 struct CppLearningSectionView: View {
-    @StateObject private var store = AppStore()
+    @StateObject private var store = AppStore.shared
 
     var body: some View {
         CppRootTabView()

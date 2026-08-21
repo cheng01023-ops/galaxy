@@ -72,6 +72,9 @@ struct CourseDay: Identifiable, Hashable {
 // MARK: - 全局状态
 
 final class AppStore: ObservableObject {
+    /// 全局共享实例：退出卡片再进入时学习进度仍然保留。
+    static let shared = AppStore()
+
     @Published var track: Track {
         didSet {
             defaults.set(track.rawValue, forKey: trackKey)
