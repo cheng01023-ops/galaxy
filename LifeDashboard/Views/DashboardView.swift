@@ -19,18 +19,6 @@ enum DashboardCardKind: String, Codable, CaseIterable {
         case .cppLearning: return "C++学习"
         }
     }
-
-    /// 每张卡片的主色调，让仪表盘更有色彩。
-    var accentColor: Color {
-        switch self {
-        case .weather: return .blue
-        case .pomodoro: return .orange
-        case .health: return .pink
-        case .stepTrend: return .green
-        case .water: return .cyan
-        case .cppLearning: return .indigo
-        }
-    }
 }
 
 /// 卡片预设尺寸：半宽或全宽（仪表盘为两列网格）。
@@ -95,22 +83,6 @@ struct DashboardView: View {
                         cardView(for: item.kind)
                             .gridCellColumns(1)
                             .frame(height: halfCardHeight, alignment: .topLeading)
-                            .overlay(alignment: .top) {
-                                LinearGradient(
-                                    colors: [item.kind.accentColor.opacity(0.30), .clear],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                                .frame(height: 70)
-                                .allowsHitTesting(false)
-                            }
-                            .overlay(alignment: .leading) {
-                                RoundedRectangle(cornerRadius: 2)
-                                    .fill(item.kind.accentColor)
-                                    .frame(width: 5)
-                                    .padding(.vertical, 14)
-                                    .allowsHitTesting(false)
-                            }
                             .disabled(isEditing)
                             .overlay(alignment: .topTrailing) {
                                 if isEditing {

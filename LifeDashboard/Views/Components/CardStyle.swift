@@ -16,23 +16,3 @@ extension View {
         modifier(CardStyle())
     }
 }
-
-/// 卡片标题 + 彩色图标徽章，让每张卡片更有色彩。
-struct CardTitleBadge: View {
-    let title: String
-    let systemImage: String
-    let color: Color
-
-    var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: systemImage)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.white)
-                .frame(width: 28, height: 28)
-                .background(color.gradient, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
-            Text(title)
-                .font(.headline)
-            Spacer()
-        }
-    }
-}

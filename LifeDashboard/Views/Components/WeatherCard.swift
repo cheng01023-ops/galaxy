@@ -45,7 +45,11 @@ struct WeatherCard: View {
 
     private var cardContent: some View {
         VStack(alignment: .leading, spacing: 8) {
-            CardTitleBadge(title: "天气", systemImage: "cloud.sun.fill", color: .blue)
+            HStack {
+                Label("天气", systemImage: "cloud.sun.fill")
+                    .font(.headline)
+                Spacer()
+            }
 
             if let weather = weatherService.weather {
                 Text(weather.city)

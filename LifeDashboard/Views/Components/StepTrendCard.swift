@@ -10,7 +10,8 @@ struct StepTrendCard: View {
             StepTrendDetailView()
         } label: {
             VStack(alignment: .leading, spacing: 12) {
-                CardTitleBadge(title: "近 7 天步数", systemImage: "chart.line.uptrend.xyaxis", color: .green)
+                Label("近 7 天步数", systemImage: "chart.line.uptrend.xyaxis")
+                    .font(.headline)
 
                 if healthService.last7DaysSteps.isEmpty {
                     Text("暂无步数数据")
