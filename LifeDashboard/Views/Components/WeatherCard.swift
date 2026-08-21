@@ -3,12 +3,19 @@ import Foundation
 
 /// 智能天气卡片：当前温度、天气状况、今日最高/最低温与建议，并支持地区切换。
 /// 点击卡片可进入天气详情页查看逐小时与未来一周预报。
+/// 智能天气卡片：当前温度、天气状况、今日最高/最低温与建议，并支持地区切换。
+/// 点击卡片可进入天气详情页查看逐小时与未来一周预报。
 struct WeatherCard: View {
     @EnvironmentObject private var weatherService: WeatherService
 
     @State private var showsCustomCityAlert = false
     @State private var customCityText = ""
     @State private var showsDetail = false
+
+    /// 天气氛围：用于给卡片配色。
+    private enum WeatherTone {
+        case clearDay, clearNight, cloudy, rain, snow, thunder, fog
+    }
 
     var body: some View {
         Button {
@@ -21,6 +28,7 @@ struct WeatherCard: View {
             HStack(spacing: 8) {
                 if weatherService.isLoading {
                     ProgressView()
+                        .tint(.white)
                 }
                 regionMenu
             }
@@ -43,69 +51,152 @@ struct WeatherCard: View {
         }
     }
 
+    private var activeTone: WeatherTone {
+        if let weather = weatherService.weather {
+            return Self.tone(for: weather.conditionID)
+        }
+        return .clearDay
+    }
+
+    private static func tone(for conditionID: Int) -> WeatherTone {
+        switch conditionID {
+        case 200...232: return .thunder
+        case 300...321, 500...531: return .rain
+        case 600...622: return .snow
+        case 701...781: return .fog
+        case 800:
+            let hour = Calendar.current.component(.hour, from: Date())
+            return (hour >= 6 && hour < 19) ? .clearDay : .clearNight
+        case 801...804: return .cloudy
+        default: return .cloudy
+        }
+    }
+
+    private var gradientColors: [Color] {
+        switch activeTone {
+        case .clearDay:
+            return [Color(red: 0.24, green: 0.54, blue: 0.95), Color(red: 0.96, green: 0.61, blue: 0.34)]
+        case .clearNight:
+            return [Color(red: 0.07, green: 0.10, blue: 0.32), Color(red: 0.27, green: 0.22, blue: 0.53)]
+        case .cloudy:
+            return [Color(red: 0.31, green: 0.42, blue: 0.57), Color(red: 0.56, green: 0.66, blue: 0.78)]
+        case .rain:
+            return [Color(red: 0.12, green: 0.23, blue: 0.44), Color(red: 0.37, green: 0.55, blue: 0.78)]
+        case .snow:
+            return [Color(red: 0.36, green: 0.50, blue: 0.70), Color(red: 0.64, green: 0.76, blue: 0.89)]
+        case .thunder:
+            return [Color(red: 0.21, green: 0.13, blue: 0.41), Color(red: 0.47, green: 0.29, blue: 0.63)]
+        case .fog:
+            return [Color(red: 0.33, green: 0.39, blue: 0.47), Color(red: 0.54, green: 0.61, blue: 0.69)]
+        }
+    }
+
+    private var iconColor: Color {
+        switch activeTone {
+        case .clearDay, .clearNight: return .yellow
+        case .rain: return Color(red: 0.78, green: 0.92, blue: 1.0)
+        case .snow, .cloudy: return .white
+        case .thunder: return .yellow
+        case .fog: return .white.opacity(0.9)
+        }
+    }
+
     private var cardContent: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Label("天气", systemImage: "cloud.sun.fill")
-                    .font(.headline)
+                Label {
+                    Text("天气")
+                        .foregroundStyle(.white)
+                } icon: {
+                    Image(systemName: "cloud.sun.fill")
+                        .foregroundStyle(.yellow)
+                }
+                .font(.headline)
                 Spacer()
             }
 
             if let weather = weatherService.weather {
                 Text(weather.city)
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.85))
 
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
                     Image(systemName: weather.symbolName)
                         .font(.title2)
-                        .foregroundStyle(.tint)
+                        .foregroundStyle(iconColor)
                     Text("\(Int(weather.temperature.rounded()))°")
                         .font(.system(size: 42, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
                     Text(weather.condition)
                         .font(.title3)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.white.opacity(0.9))
                 }
 
                 HStack(spacing: 12) {
-                    Label("最高 \(Int(weather.high.rounded()))°", systemImage: "arrow.up")
-                    Label("最低 \(Int(weather.low.rounded()))°", systemImage: "arrow.down")
-                }
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-
-                HStack(spacing: 14) {
-                    Label("体感 \(Int(weather.feelsLike.rounded()))°", systemImage: "thermometer.medium")
-                    if let humidity = weather.humidity {
-                        Label("湿度 \(humidity)%", systemImage: "humidity.fill")
+                    Label {
+                        Text("最高 \(Int(weather.high.rounded()))°")
+                    } icon: {
+                        Image(systemName: "arrow.up")
+                            .foregroundStyle(.orange)
+                    }
+                    Label {
+                        Text("最低 \(Int(weather.low.rounded()))°")
+                    } icon: {
+                        Image(systemName: "arrow.down")
+                            .foregroundStyle(.cyan)
                     }
                 }
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.white.opacity(0.9))
+
+                HStack(spacing: 14) {
+                    Label {
+                        Text("体感 \(Int(weather.feelsLike.rounded()))°")
+                    } icon: {
+                        Image(systemName: "thermometer.medium")
+                            .foregroundStyle(.orange)
+                    }
+                    if let humidity = weather.humidity {
+                        Label {
+                            Text("湿度 \(humidity)%")
+                        } icon: {
+                            Image(systemName: "humidity.fill")
+                                .foregroundStyle(.cyan)
+                        }
+                    }
+                }
+                .font(.footnote)
+                .foregroundStyle(.white.opacity(0.9))
 
                 Text(weatherService.advice)
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.85))
                     .padding(.top, 2)
 
                 HStack {
                     Spacer()
                     Label("查看详情", systemImage: "chevron.right")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.9))
                 }
             } else if let error = weatherService.errorMessage {
                 Text(error)
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.85))
                     .frame(maxWidth: .infinity, alignment: .leading)
             } else {
                 Text("天气数据加载中…")
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.white.opacity(0.85))
             }
         }
-        .cardStyle()
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            LinearGradient(colors: gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing),
+            in: RoundedRectangle(cornerRadius: 20, style: .continuous)
+        )
+        .shadow(color: .black.opacity(0.16), radius: 8, x: 0, y: 2)
     }
 
     /// 地区切换菜单：内置常用城市 + 自定义城市入口。
@@ -134,7 +225,7 @@ struct WeatherCard: View {
         } label: {
             Image(systemName: "location.circle")
                 .font(.headline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.white)
         }
         .accessibilityLabel("切换天气地区")
     }
