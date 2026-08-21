@@ -6,7 +6,7 @@ struct RootTabView: View {
         TabView {
             DashboardView()
                 .tabItem {
-                    Label("仪表盘", systemImage: "square.grid.2x2.fill")
+                    Label("Galaxy", systemImage: "square.grid.2x2.fill")
                 }
 
             TodoListView()
