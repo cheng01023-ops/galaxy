@@ -29,6 +29,9 @@ struct RootTabView: View {
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 WaterReminderService.shared.checkReminderNow()
+            } else if phase == .background {
+                // 离开 App 时立即结束喝水灵动岛，避免残留
+                WaterReminderService.shared.endActiveLiveActivity()
             }
         }
     }

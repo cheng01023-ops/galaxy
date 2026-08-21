@@ -94,25 +94,42 @@ final class WaterReminderService: ObservableObject {
         nextCheckTimer = timer
     }
 
-    /// 启动喝水提醒灵动岛，约 8 秒后自动结束。
+    /// 立即结束正在显示的喝水灵动岛（离开 App 时调用）。
+    func endActiveLiveActivity() {
+        guard let activity = waterActivity else { return }
+        waterActivity = nil
+        let state = WaterReminderAttributes.ContentState()
+        Task {
+            await activity.end(
+                ActivityContent(state: state, staleDate: Date()),
+                dismissalPolicy: .immediate
+            )
+        }
+    }
+
+    /// 启动喝水提醒灵动岛，约 8 秒后由系统自动结束（即使退出 App 也会按时消失）。
     private func showDrinkWaterLiveActivity() {
+        // 先结束上一次可能残留的灵动岛，避免叠加
+        endActiveLiveActivity()
+
         let attributes = WaterReminderAttributes()
         let state = WaterReminderAttributes.ContentState()
-        let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(60))
+        let endDate = Date().addingTimeInterval(8)
 
         do {
-            waterActivity = try Activity<WaterReminderAttributes>.request(
+            let content = ActivityContent(state: state, staleDate: endDate)
+            let activity = try Activity<WaterReminderAttributes>.request(
                 attributes: attributes,
                 content: content,
                 pushType: nil
             )
-            Task { [weak self] in
-                try? await Task.sleep(for: .seconds(8))
-                await self?.waterActivity?.end(
-                    ActivityContent(state: state, staleDate: Date()),
-                    dismissalPolicy: .immediate
+            waterActivity = activity
+            // 用系统策略在 8 秒后自动消失，App 被杀也不影响
+            Task {
+                await activity.end(
+                    ActivityContent(state: state, staleDate: endDate),
+                    dismissalPolicy: .after(endDate)
                 )
-                self?.waterActivity = nil
             }
         } catch {
             print("喝水提醒灵动岛启动失败：\(error.localizedDescription)")
