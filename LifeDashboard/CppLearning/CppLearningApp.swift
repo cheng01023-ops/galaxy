@@ -37,5 +37,6 @@ struct CppLearningSectionView: View {
     var body: some View {
         CppRootTabView()
             .environmentObject(store)
+            .toolbar(.hidden, for: .tabBar)
     }
 }
