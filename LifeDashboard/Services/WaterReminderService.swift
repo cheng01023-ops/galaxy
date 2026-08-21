@@ -62,6 +62,13 @@ final class WaterReminderService: ObservableObject {
         return reminders.filter { $0.hour * 60 + $0.minute <= minutes }.count
     }
 
+    /// 判断某个提醒今天是否已经到点。
+    func isPassed(_ reminder: WaterReminder, on date: Date = .now) -> Bool {
+        let minutes = Calendar.current.component(.hour, from: date) * 60
+            + Calendar.current.component(.minute, from: date)
+        return reminder.hour * 60 + reminder.minute <= minutes
+    }
+
     // MARK: - 每日通知
 
     private static func sorted(_ list: [WaterReminder]) -> [WaterReminder] {
