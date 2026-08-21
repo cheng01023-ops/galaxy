@@ -14,7 +14,21 @@ final class HealthService: ObservableObject {
     @Published var isAuthorized = false
     @Published var errorMessage: String?
 
+    /// 每日步数目标（用户可自定义，持久化到 UserDefaults）。
+    @Published var dailyStepGoal: Double {
+        didSet {
+            UserDefaults.standard.set(dailyStepGoal, forKey: Self.dailyStepGoalKey)
+        }
+    }
+
+    private static let dailyStepGoalKey = "health.dailyStepGoal"
+
     private let store = HKHealthStore()
+
+    init() {
+        let stored = UserDefaults.standard.double(forKey: Self.dailyStepGoalKey)
+        _dailyStepGoal = Published(initialValue: stored > 0 ? stored : HealthSummary.defaultDailyStepGoal)
+    }
 
     /// HealthKit 是否可用（真机可用，模拟器通常不可用）。
     var isHealthDataAvailable: Bool {
