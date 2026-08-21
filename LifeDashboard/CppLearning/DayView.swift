@@ -3,7 +3,7 @@ import SwiftUI
 struct DayView: View {
     let track: Track
     let day: CourseDay
-    let store: AppStore
+    @ObservedObject var store: AppStore
 
     var body: some View {
         ScrollView {
