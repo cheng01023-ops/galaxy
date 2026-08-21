@@ -83,6 +83,7 @@ struct DashboardView: View {
                         cardView(for: item.kind)
                             .gridCellColumns(1)
                             .frame(height: halfCardHeight, alignment: .topLeading)
+                            .clipped()
                             .disabled(isEditing)
                             .overlay(alignment: .topTrailing) {
                                 if isEditing {

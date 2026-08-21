@@ -37,7 +37,7 @@ struct PomodoroTimerView: View {
             if theme == .vivid {
                 content
                     .padding(16)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                     .background(gradient, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
                     .shadow(color: .black.opacity(0.18), radius: 8, x: 0, y: 2)
             } else {
