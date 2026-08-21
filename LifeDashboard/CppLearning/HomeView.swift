@@ -24,7 +24,7 @@ struct HomeView: View {
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .day(let track, let day):
-                    DayView(track: track, day: day)
+                    DayView(track: track, day: day, store: store)
                 }
             }
         }
