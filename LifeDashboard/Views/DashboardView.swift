@@ -61,7 +61,12 @@ struct DashboardView: View {
     init() {
         if let data = UserDefaults.standard.data(forKey: Self.layoutKey),
            let saved = try? JSONDecoder().decode([DashboardLayoutItem].self, from: data) {
-            _layout = State(initialValue: saved)
+            // 自动补齐：老版本保存的布局里没有的新卡片（如喝水提醒）会自动追加。
+            var merged = saved
+            for kind in DashboardCardKind.allCases where !merged.contains(where: { $0.kind == kind }) {
+                merged.append(DashboardLayoutItem(kind: kind, size: kind == .stepTrend ? .full : .half))
+            }
+            _layout = State(initialValue: merged)
         } else {
             _layout = State(initialValue: Self.defaultLayout)
         }
