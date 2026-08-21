@@ -11,7 +11,7 @@ final class WaterReminderService: ObservableObject {
 
     private let defaultsKey = "water.reminders.v1"
     private var waterActivity: Activity<WaterReminderAttributes>?
-    private var checkTimer: Timer?
+    private var nextCheckTimer: Timer?
     private var lastShownMinute: Int?
 
     private init() {
@@ -26,7 +26,7 @@ final class WaterReminderService: ObservableObject {
                 WaterReminder(hour: 18, minute: 0)
             ]
         }
-        startCheckTimer()
+        scheduleNextCheck()
     }
 
     func save(_ newReminders: [WaterReminder]) {
@@ -35,6 +35,7 @@ final class WaterReminderService: ObservableObject {
             UserDefaults.standard.set(data, forKey: defaultsKey)
         }
         scheduleNotifications()
+        scheduleNextCheck()
     }
 
     /// 下一个提醒时间点。
@@ -46,17 +47,6 @@ final class WaterReminderService: ObservableObject {
 
     // MARK: - 到点灵动岛提醒
 
-    private func startCheckTimer() {
-        checkTimer?.invalidate()
-        let timer = Timer(timeInterval: 30, repeats: true) { [weak self] _ in
-            Task { @MainActor in
-                self?.checkReminderNow()
-            }
-        }
-        RunLoop.main.add(timer, forMode: .common)
-        checkTimer = timer
-    }
-
     /// 检查当前时间是否到达提醒点，到达则弹出灵动岛。
     func checkReminderNow() {
         let calendar = Calendar.current
@@ -66,14 +56,46 @@ final class WaterReminderService: ObservableObject {
         guard reminders.contains(where: { $0.hour * 60 + $0.minute == minuteValue }),
               lastShownMinute != minuteValue else { return }
 
-        showDrinkWaterLiveActivity()
+        triggerLiveActivity()
         lastShownMinute = minuteValue
+    }
+
+    /// 立即弹出一个 8 秒的喝水灵动岛（用于测试）。
+    @discardableResult
+    func triggerLiveActivity() -> Bool {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return false }
+        showDrinkWaterLiveActivity()
+        return true
+    }
+
+    /// 精确调度：到下一个提醒时间点时自动弹出灵动岛。
+    private func scheduleNextCheck() {
+        nextCheckTimer?.invalidate()
+        nextCheckTimer = nil
+
+        guard let next = reminders.first else { return }
+        var comps = DateComponents()
+        comps.hour = next.hour
+        comps.minute = next.minute
+
+        guard let fireDate = Calendar.current.nextDate(
+            after: Date(),
+            matching: comps,
+            matchingPolicy: .nextTime
+        ) else { return }
+
+        let timer = Timer(fire: fireDate, interval: 0, repeats: false) { [weak self] _ in
+            Task { @MainActor in
+                self?.triggerLiveActivity()
+                self?.scheduleNextCheck()
+            }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        nextCheckTimer = timer
     }
 
     /// 启动喝水提醒灵动岛，约 8 秒后自动结束。
     private func showDrinkWaterLiveActivity() {
-        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
-
         let attributes = WaterReminderAttributes()
         let state = WaterReminderAttributes.ContentState()
         let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(60))
