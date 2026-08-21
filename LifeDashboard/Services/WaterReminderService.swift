@@ -57,7 +57,8 @@ final class WaterReminderService: ObservableObject {
         checkTimer = timer
     }
 
-    private func checkReminderNow() {
+    /// 检查当前时间是否到达提醒点，到达则弹出灵动岛。
+    func checkReminderNow() {
         let calendar = Calendar.current
         let now = Date()
         let minuteValue = calendar.component(.hour, from: now) * 60 + calendar.component(.minute, from: now)
