@@ -1,7 +1,8 @@
+import ActivityKit
 import Foundation
 @preconcurrency import UserNotifications
 
-/// 负责喝水提醒时间的本地持久化与每日通知调度。
+/// 负责喝水提醒时间的本地持久化、每日通知与到点灵动岛提醒。
 @MainActor
 final class WaterReminderService: ObservableObject {
     static let shared = WaterReminderService()
@@ -9,6 +10,9 @@ final class WaterReminderService: ObservableObject {
     @Published private(set) var reminders: [WaterReminder]
 
     private let defaultsKey = "water.reminders.v1"
+    private var waterActivity: Activity<WaterReminderAttributes>?
+    private var checkTimer: Timer?
+    private var lastShownMinute: Int?
 
     private init() {
         if let data = UserDefaults.standard.data(forKey: defaultsKey),
@@ -22,6 +26,7 @@ final class WaterReminderService: ObservableObject {
                 WaterReminder(hour: 18, minute: 0)
             ]
         }
+        startCheckTimer()
     }
 
     func save(_ newReminders: [WaterReminder]) {
@@ -38,6 +43,60 @@ final class WaterReminderService: ObservableObject {
         let minutes = calendar.component(.hour, from: date) * 60 + calendar.component(.minute, from: date)
         return reminders.first { $0.hour * 60 + $0.minute > minutes } ?? reminders.first
     }
+
+    // MARK: - 到点灵动岛提醒
+
+    private func startCheckTimer() {
+        checkTimer?.invalidate()
+        let timer = Timer(timeInterval: 30, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.checkReminderNow()
+            }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        checkTimer = timer
+    }
+
+    private func checkReminderNow() {
+        let calendar = Calendar.current
+        let now = Date()
+        let minuteValue = calendar.component(.hour, from: now) * 60 + calendar.component(.minute, from: now)
+
+        guard reminders.contains(where: { $0.hour * 60 + $0.minute == minuteValue }),
+              lastShownMinute != minuteValue else { return }
+
+        showDrinkWaterLiveActivity()
+        lastShownMinute = minuteValue
+    }
+
+    /// 启动喝水提醒灵动岛，约 8 秒后自动结束。
+    private func showDrinkWaterLiveActivity() {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+
+        let attributes = WaterReminderAttributes()
+        let state = WaterReminderAttributes.ContentState()
+        let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(60))
+
+        do {
+            waterActivity = try Activity<WaterReminderAttributes>.request(
+                attributes: attributes,
+                content: content,
+                pushType: nil
+            )
+            Task { [weak self] in
+                try? await Task.sleep(for: .seconds(8))
+                await self?.waterActivity?.end(
+                    ActivityContent(state: state, staleDate: Date()),
+                    dismissalPolicy: .immediate
+                )
+                self?.waterActivity = nil
+            }
+        } catch {
+            print("喝水提醒灵动岛启动失败：\(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - 每日通知
 
     private static func sorted(_ list: [WaterReminder]) -> [WaterReminder] {
         list.sorted { $0.hour * 60 + $0.minute < $1.hour * 60 + $1.minute }
