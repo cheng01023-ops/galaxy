@@ -6,8 +6,8 @@ struct HealthSummary {
     var sleepHours: Double = 0
     var restingHeartRate: Double = 0
 
-    /// 每日步数目标，用于详情页目标进度展示。
-    static let dailyStepGoal: Double = 10_000
+    /// 默认每日步数目标（用户未自定义时使用），用于详情页目标进度展示。
+    static let defaultDailyStepGoal: Double = 10_000
 
     /// 步数是否为有效数据（无数据时为 false）。
     var hasStepData: Bool { stepCount > 0 }

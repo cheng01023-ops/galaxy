@@ -74,6 +74,7 @@ struct HealthSummaryCard: View {
 /// 昨晚睡眠阶段明细与本周总结。
 struct HealthDetailView: View {
     @EnvironmentObject private var healthService: HealthService
+    @State private var showingStepGoalEditor = false
 
     var body: some View {
         ScrollView {
@@ -156,14 +157,25 @@ struct HealthDetailView: View {
         .frame(maxWidth: .infinity)
     }
 
-    /// 今日步数目标进度。
+    /// 今日步数目标进度（目标值可自定义）。
     private var stepGoalCard: some View {
         let steps = healthService.summary.stepCount
-        let goal = HealthSummary.dailyStepGoal
+        let goal = healthService.dailyStepGoal
         let progress = goal > 0 ? min(steps / goal, 1.0) : 0
 
         return VStack(alignment: .leading, spacing: 12) {
-            sectionHeader("今日步数目标", systemImage: "flag.checkered", tint: .green)
+            HStack {
+                sectionHeader("今日步数目标", systemImage: "flag.checkered", tint: .green)
+                Spacer()
+                Button {
+                    showingStepGoalEditor = true
+                } label: {
+                    Label("自定义", systemImage: "slider.horizontal.3")
+                        .font(.caption)
+                        .foregroundStyle(.green)
+                }
+                .buttonStyle(.borderless)
+            }
 
             ProgressView(value: progress)
                 .tint(.green)
@@ -177,11 +189,16 @@ struct HealthDetailView: View {
             .foregroundStyle(.secondary)
         }
         .cardStyle()
+        .sheet(isPresented: $showingStepGoalEditor) {
+            StepGoalEditorView(currentGoal: healthService.dailyStepGoal) { newGoal in
+                healthService.dailyStepGoal = newGoal
+            }
+        }
     }
 
     private var goalText: String {
         let steps = healthService.summary.stepCount
-        let goal = HealthSummary.dailyStepGoal
+        let goal = healthService.dailyStepGoal
         if steps >= goal { return "已达成目标 🎉" }
         return "还差 \(Formatters.number(goal - steps, maximumFractionDigits: 0)) 步"
     }
@@ -434,6 +451,102 @@ struct HealthDetailView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
         .cardStyle()
+    }
+}
+
+/// 步数目标编辑弹窗：支持数字输入、步进器与快捷预设。
+private struct StepGoalEditorView: View {
+    @Environment(\.dismiss) private var dismiss
+    let onSave: (Double) -> Void
+
+    @State private var goalText: String
+    @State private var showInvalidInput = false
+
+    private let presets: [Double] = [3_000, 5_000, 8_000, 10_000, 15_000, 20_000]
+
+    init(currentGoal: Double, onSave: @escaping (Double) -> Void) {
+        self.onSave = onSave
+        _goalText = State(initialValue: Formatters.number(currentGoal, maximumFractionDigits: 0))
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    HStack {
+                        TextField("请输入每日步数目标", text: $goalText)
+                            .keyboardType(.numberPad)
+                            .font(.title3.monospacedDigit())
+                        Text("步")
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Stepper(
+                        "步进调整：\(Formatters.number(parsedGoal, maximumFractionDigits: 0)) 步",
+                        value: Binding(
+                            get: { parsedGoal },
+                            set: { goalText = Formatters.number($0, maximumFractionDigits: 0) }
+                        ),
+                        in: 1_000...100_000,
+                        step: 500
+                    )
+                } header: {
+                    Text("每日目标")
+                } footer: {
+                    if showInvalidInput {
+                        Text("请输入大于 0 的数字")
+                            .foregroundStyle(.red)
+                    } else {
+                        Text("保存后立即生效并自动记住")
+                    }
+                }
+
+                Section("快捷预设") {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 90), spacing: 8)], spacing: 8) {
+                        ForEach(presets, id: \.self) { preset in
+                            Button {
+                                goalText = Formatters.number(preset, maximumFractionDigits: 0)
+                            } label: {
+                                Text(Formatters.number(preset, maximumFractionDigits: 0))
+                                    .font(.subheadline.monospacedDigit())
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 8)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                            .fill(parsedGoal == preset ? Color.green.opacity(0.15) : Color(.secondarySystemBackground))
+                                    )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                }
+            }
+            .navigationTitle("设置步数目标")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("取消") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("保存") { save() }
+                        .fontWeight(.semibold)
+                }
+            }
+        }
+    }
+
+    private var parsedGoal: Double {
+        Double(goalText.filter { $0.isNumber }) ?? 0
+    }
+
+    private func save() {
+        let value = parsedGoal.rounded()
+        guard value > 0 else {
+            showInvalidInput = true
+            return
+        }
+        onSave(value)
+        dismiss()
     }
 }
 
