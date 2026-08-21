@@ -2,7 +2,8 @@ import Foundation
 
 /// 负责获取当前天气。
 /// - 已填入 OpenWeatherMap Key 时使用 OpenWeatherMap。
-/// - 未填 Key 时自动回退到 Open-Meteo（免费、无需注册），保证开箱即用。
+/// - 未填 Key 时默认使用「中国天气网（中央气象台）」数据，与系统天气预报同源、更精准；
+///   中国天气网不可用时自动回退到 Open-Meteo（免费、无需注册），保证开箱即用。
 @MainActor
 final class WeatherService: ObservableObject {
     @Published var weather: WeatherData?
@@ -30,7 +31,7 @@ final class WeatherService: ObservableObject {
 
     // TODO: 填入你的 OpenWeatherMap API Key（可选）
     // 申请地址：https://home.openweathermap.org/api_keys
-    // 留空时应用会自动使用无需 Key 的 Open-Meteo 数据源。
+    // 留空时应用会自动使用无需 Key 的中国天气网（中央气象台）数据，更贴近系统天气预报。
     private let apiKey = ""
 
     init(city: String = "Shanghai") {
@@ -64,7 +65,7 @@ final class WeatherService: ObservableObject {
         if !apiKey.isEmpty && apiKey != "YOUR_API_KEY" {
             await fetchOpenWeatherMap()
         } else {
-            await fetchOpenMeteo()
+            await fetchDefaultWeather()
         }
     }
 
@@ -98,9 +99,9 @@ final class WeatherService: ObservableObject {
         }
     }
 
-    // MARK: - Open-Meteo（无需 Key 的免费回退）
+    // MARK: - 默认数据源（中国天气网/中央气象台，失败时回退 Open-Meteo）
 
-    private func fetchOpenMeteo() async {
+    private func fetchDefaultWeather() async {
         do {
             let snapshot = try await OpenMeteoClient.shared.fetchWeather(city: city, forecastDays: 7)
             weather = WeatherData(
