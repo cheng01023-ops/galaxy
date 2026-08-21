@@ -16,6 +16,7 @@ struct DayView: View {
         }
         .navigationTitle(day.title)
         .navigationBarTitleDisplayMode(.inline)
+        .environmentObject(store)
     }
 
     private var header: some View {
