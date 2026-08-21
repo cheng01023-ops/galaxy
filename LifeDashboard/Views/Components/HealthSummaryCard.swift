@@ -16,44 +16,65 @@ struct HealthSummaryCard: View {
     }
 
     private var summaryContent: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Label("健康", systemImage: "heart.fill")
-                    .font(.headline)
-                    .foregroundStyle(.pink)
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.tertiary)
+        VStack(alignment: .leading, spacing: 0) {
+            // 顶部三色渐变条，呼应下方三项指标的配色。
+            LinearGradient(
+                colors: [.green, .indigo, .pink],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+            .frame(height: 4)
+
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Label("健康", systemImage: "heart.fill")
+                        .font(.headline)
+                        .foregroundStyle(.pink)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(.pink.opacity(0.5))
+                }
+
+                metricRow(icon: "figure.walk", label: "今日步数",
+                          value: Formatters.number(healthService.summary.stepCount), unit: "步",
+                          tint: .green)
+
+                metricRow(icon: "moon.zzz.fill", label: "昨晚睡眠",
+                          value: Formatters.number(healthService.summary.sleepHours), unit: "小时",
+                          tint: .indigo)
+
+                metricRow(icon: "heart.text.square.fill", label: "静息心率",
+                          value: Formatters.number(healthService.summary.restingHeartRate), unit: "次/分",
+                          tint: .pink)
+
+                if !healthService.isHealthDataAvailable {
+                    Text("模拟器无法读取 HealthKit，请在真机运行")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else if let error = healthService.errorMessage {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
-
-            metricRow(icon: "figure.walk", label: "今日步数",
-                      value: Formatters.number(healthService.summary.stepCount), unit: "步")
-
-            metricRow(icon: "moon.zzz.fill", label: "昨晚睡眠",
-                      value: Formatters.number(healthService.summary.sleepHours), unit: "小时")
-
-            metricRow(icon: "heart.text.square.fill", label: "静息心率",
-                      value: Formatters.number(healthService.summary.restingHeartRate), unit: "次/分")
-
-            if !healthService.isHealthDataAvailable {
-                Text("模拟器无法读取 HealthKit，请在真机运行")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            } else if let error = healthService.errorMessage {
-                Text(error)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+            .padding(16)
         }
-        .cardStyle()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.cardBackground, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
     }
 
-    private func metricRow(icon: String, label: String, value: String, unit: String) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 6) {
+    /// 单行指标：彩色图标底片 + 彩色数值。
+    private func metricRow(icon: String, label: String, value: String, unit: String, tint: Color) -> some View {
+        HStack(spacing: 10) {
             Image(systemName: icon)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(tint)
+                .frame(width: 34, height: 34)
+                .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+
             VStack(alignment: .leading, spacing: 1) {
                 Text(label)
                     .font(.caption)
@@ -61,6 +82,7 @@ struct HealthSummaryCard: View {
                 HStack(alignment: .firstTextBaseline, spacing: 2) {
                     Text(value)
                         .font(.title2.weight(.semibold))
+                        .foregroundStyle(tint)
                     Text(unit)
                         .font(.caption)
                         .foregroundStyle(.secondary)
