@@ -11,7 +11,6 @@ struct LifeDashboardWidgetBundle: WidgetBundle {
         GalaxyClockWidget()
         GalaxyQuoteWidget()
         PomodoroLiveActivity()
-        WaterReminderLiveActivity()
     }
 }
 
@@ -51,51 +50,6 @@ struct PomodoroLiveActivity: Widget {
     }
 }
 
-
-/// 喝水提醒灵动岛实时活动。
-struct WaterReminderLiveActivity: Widget {
-    var body: some WidgetConfiguration {
-        ActivityConfiguration(for: WaterReminderAttributes.self) { context in
-            HStack(spacing: 12) {
-                Image(systemName: "drop.fill")
-                    .font(.title2)
-                    .foregroundStyle(.cyan)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("喝水提醒")
-                        .font(.headline)
-                    Text(context.state.message)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-            }
-            .padding()
-            .activityBackgroundTint(Color(white: 0.1))
-            .activitySystemActionForegroundColor(.white)
-        } dynamicIsland: { context in
-            DynamicIsland {
-                DynamicIslandExpandedRegion(.center) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "drop.fill")
-                            .foregroundStyle(.cyan)
-                        Text(context.state.message)
-                            .font(.headline)
-                    }
-                }
-            } compactLeading: {
-                Image(systemName: "drop.fill")
-                    .foregroundStyle(.cyan)
-            } compactTrailing: {
-                Text("喝水")
-                    .font(.caption2)
-                    .fontWeight(.semibold)
-            } minimal: {
-                Image(systemName: "drop.fill")
-                    .foregroundStyle(.cyan)
-            }
-        }
-    }
-}
 
 /// 锁屏实时活动视图。
 struct LockScreenLiveActivityView: View {

@@ -7,63 +7,61 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		FCAF542D17DA47CB82822AC9 /* AppMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA27BDBD5D04377A3418010 /* AppMain.swift */; };
-		BA6A1C7501CA49688BBFFB4F /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 960B614BECC647129C96F8B2 /* TodoItem.swift */; };
-		EB6A8AA266584408A076CCEB /* HealthSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B8C983A6C64C4BB93BC3F1 /* HealthSummary.swift */; };
-		D5CEE139A2B546119770771D /* WeatherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B4D29B3C194D27A91D1DB5 /* WeatherData.swift */; };
-		FA9B01B55B274F2286D00D10 /* FocusSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8CFD8B4E0EB47EEA85B282E /* FocusSession.swift */; };
-		651CD8842D5D4B07B86AC82D /* WeeklyReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33351E85AA3C4822BC3A90C5 /* WeeklyReport.swift */; };
-		65009EFFB4FB4BCA8EDB89C1 /* PomodoroAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825818844E094834ABAC765F /* PomodoroAttributes.swift */; };
-		EB01F1F4E7E148C2AEEAF616 /* WaterReminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48716E8F35F348F8A8E293FA /* WaterReminder.swift */; };
-		2712A25D85704B5591964003 /* WaterReminderAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DDA9F9D931749DA99074D0D /* WaterReminderAttributes.swift */; };
-		E5373BF876FC44A381DB3791 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F7BD5C4AAB49809F5151A1 /* RootTabView.swift */; };
-		E971E8DBCE144219B440111C /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E96D328AC740A694A21FFB /* DashboardView.swift */; };
-		0249C5E8ABDE49A78FA11F56 /* TodoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B8F83A95AC6487F9C125AF3 /* TodoListView.swift */; };
-		F6950C7F3EBF48F3ABC42D59 /* TodoEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C7C23415264DB4B8A98EFE /* TodoEditorView.swift */; };
-		51FAE84053BB476682FCEF58 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F334D374EB64E0D91E93225 /* StatisticsView.swift */; };
-		B75170EC6BF4426FB598EEB2 /* WaterReminderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48B5D7D2CA5C4768B7A2C8C9 /* WaterReminderDetailView.swift */; };
-		E89B66DB64234CDE8D6E4957 /* CardStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53C0BEAD2C694B6D8EBF5A54 /* CardStyle.swift */; };
-		735954E4F6564DCD8754D8F5 /* WeatherCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E4B6C9DC4844721A22469C4 /* WeatherCard.swift */; };
-		E88AFF26D96D47E1BB26A3AE /* PomodoroCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1072C83471544B893CB1D97 /* PomodoroCard.swift */; };
-		3984B04DE9E54EFBB994074E /* HealthSummaryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9200CF43730A42B3B7FF7873 /* HealthSummaryCard.swift */; };
-		60C349336D404AC9B7CB6B1A /* StepTrendCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12AD0E7CB42641D68AFA1517 /* StepTrendCard.swift */; };
-		A6B7D05DEB9E401782744FED /* WaterReminderCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B831F8183A554D80B2111DC6 /* WaterReminderCard.swift */; };
-		6A5833808FD14AAC9BE2D5EE /* PomodoroViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3D91ECCF9814B308ECFCB4A /* PomodoroViewModel.swift */; };
-		E693FCCEF0404B00B37221D0 /* HealthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC377E5CD84440C185F60374 /* HealthService.swift */; };
-		820F3F4907984AE8A3E85CF6 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B58DB075C9654964AB5A960C /* WeatherService.swift */; };
-		F00AE27E78E34C968AF43EF9 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 770D455738504B98B7D977B1 /* NotificationService.swift */; };
-		60E734191748471FA5BDC010 /* WaterReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5B530159854DD7873E77F2 /* WaterReminderService.swift */; };
-		A587B95F5C6E457891CCF1CF /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0521CC52B85C44A1844EDC76 /* Formatters.swift */; };
-		5C74CF96AF994FB4B519E53E /* Color+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = B251EF42171844368EC14834 /* Color+App.swift */; };
-		7C55925950F447489C3ED74A /* WeatherAdvice.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD6484FD736E440F84204BBD /* WeatherAdvice.swift */; };
-		6DD8093D620E4BEB9144F874 /* OpenMeteoClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8118624BB5DB4C82825AD806 /* OpenMeteoClient.swift */; };
-		561FD85F47BE432CB897E757 /* LifeDashboardWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 692CCEAEBCFB4FC29941E5F6 /* LifeDashboardWidgetBundle.swift */; };
-		47DC7222C1E440B7AB2DAB1C /* GalaxyWeatherWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E03296F48148CA9B00285C /* GalaxyWeatherWidget.swift */; };
-		F0606BBB1DFB427FA99DB148 /* PomodoroAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 825818844E094834ABAC765F /* PomodoroAttributes.swift */; };
-		53C8D73789044537B737ADFE /* WaterReminderAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DDA9F9D931749DA99074D0D /* WaterReminderAttributes.swift */; };
-		A578607E014D4B9AA63F8CCD /* OpenMeteoClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8118624BB5DB4C82825AD806 /* OpenMeteoClient.swift */; };
-		4FB46861355F4AF583FA770D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F0FC344753F84808B7E1F341 /* Assets.xcassets */; };
-		F8D723FB9A524C9AB87E1FCB /* LifeDashboardWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C8BB3381A856499A8449485D /* LifeDashboardWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		ED4CCFD76C0143858F11A34B /* AppMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E07C25AD6864AFEB2BCEE2A /* AppMain.swift */; };
+		4A699683707548018A2F709D /* TodoItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8A052C73BAC42529F300356 /* TodoItem.swift */; };
+		3C5CD526A64C4D889CDBCC13 /* HealthSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 134A59DD5B0B4412A670D6B7 /* HealthSummary.swift */; };
+		CA1ADEB733994D6683008194 /* WeatherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E084B7ED5D749F39B788C71 /* WeatherData.swift */; };
+		5F8BB5FBBB44408EA9AA7D32 /* FocusSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7129B5B9493497ABE09BA4E /* FocusSession.swift */; };
+		DDCFD55165B749AEB0887499 /* WeeklyReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBB1089D5634564843DCB3C /* WeeklyReport.swift */; };
+		B9475A4A963F415CA5E76D1D /* PomodoroAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985488D8CC3744C2A075D4BB /* PomodoroAttributes.swift */; };
+		DDD13E5FB1C743D399356126 /* WaterReminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D35AF60A76F446B85E7595C /* WaterReminder.swift */; };
+		75295E4CDF51403089769611 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 465BEB1CD456465CAE2D834E /* RootTabView.swift */; };
+		56EDD10BF0C846F89AA42960 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229DD63B36E1464D9D98BD01 /* DashboardView.swift */; };
+		4939B4E529704C37A10BED6E /* TodoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950F8EC2C7224F41927EBA8F /* TodoListView.swift */; };
+		82680D16F4B9462FB1A8B8B2 /* TodoEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F7BD918E68B478BA7F90530 /* TodoEditorView.swift */; };
+		6BD72A66F0D948B885FA1888 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 461F3A18063C4B76BD3240FC /* StatisticsView.swift */; };
+		29E19C527640482EA480EBE0 /* WaterReminderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA62AA72B99A4B609CBED654 /* WaterReminderDetailView.swift */; };
+		A3636156B9B548BAB0BBCB9A /* CardStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 055AD17881C54D5CBF16D59D /* CardStyle.swift */; };
+		17E8B8BFFD834933A0DB6576 /* WeatherCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 945EE7FD34334A9396ACF07B /* WeatherCard.swift */; };
+		FE17D9ABAF09400DA6065B82 /* PomodoroCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8624E8A5425D47998C870AF4 /* PomodoroCard.swift */; };
+		B9CC76995F21403490D5417D /* HealthSummaryCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5FEA58FDE7487594A6C1B7 /* HealthSummaryCard.swift */; };
+		BC729720051541698BD75274 /* StepTrendCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78487BEB573949B5AEB86634 /* StepTrendCard.swift */; };
+		919E0378273B46219BB2C666 /* WaterReminderCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5012CE70C1AD4BD6ACEB4A19 /* WaterReminderCard.swift */; };
+		0A34163C925446E8AEB0BF2B /* PomodoroViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9707666B6FF40508B3E7ED3 /* PomodoroViewModel.swift */; };
+		35E3860980334E9A81DA87BB /* HealthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1FAFBB681B84C7CA3F935D4 /* HealthService.swift */; };
+		8F07C3CA35BD4B529B4D03C1 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C1CCD730E964AD0B4CF4C11 /* WeatherService.swift */; };
+		2FFC7B9EE11446A481DB58B9 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FABC443DF9B4A638A3C50EA /* NotificationService.swift */; };
+		C1903B3D9AF2434A913E2E33 /* WaterReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE653D4ECEF4AFF85093218 /* WaterReminderService.swift */; };
+		B1C105FA60814CCA8873E9E8 /* Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696597FFB8CF4A4183BE45AC /* Formatters.swift */; };
+		CAB613C6111C4ECDA2135D46 /* Color+App.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD090392A61542C99C3D0250 /* Color+App.swift */; };
+		22B14AF33BB7457DBB96114E /* WeatherAdvice.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF57F6538EED45E3A8606750 /* WeatherAdvice.swift */; };
+		19DDE52EFC9040D1B02AE460 /* OpenMeteoClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4539F7C91D554FAD9957EA36 /* OpenMeteoClient.swift */; };
+		240999CAD02D4C3C970F3CE4 /* LifeDashboardWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DAC99D0900477FA5BCE4A5 /* LifeDashboardWidgetBundle.swift */; };
+		D07C3D5871214030AEB10085 /* GalaxyWeatherWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4FF168428A40D7AA9E8B92 /* GalaxyWeatherWidget.swift */; };
+		3FC6480C5651423BA89A38A7 /* PomodoroAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985488D8CC3744C2A075D4BB /* PomodoroAttributes.swift */; };
+		EDAAD3B6B04542D198D1E305 /* OpenMeteoClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4539F7C91D554FAD9957EA36 /* OpenMeteoClient.swift */; };
+		827771F96A0F4879BABF2190 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 67248A58E480477194EDB390 /* Assets.xcassets */; };
+		C84457A419244E79AE01FE79 /* LifeDashboardWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E14E819550354C118D79B0AF /* LifeDashboardWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		D7C13590CBB6459680D32632 /* PBXContainerItemProxy */ = {
+		8C686CF0C7934F1AB4EE611B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 79F3AD45A89A4565ADB9E605 /* Project object */;
+			containerPortal = 5E82CD468B2341A298F1C091 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 75D08A10FA684140B04150F8;
+			remoteGlobalIDString = BEC8396012D7470B8ABBF5A9;
 			remoteInfo = LifeDashboardWidgets;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		DBE646A09B524533B50DD36B /* Embed Foundation Extensions */ = {
+		026CDA5C47F64CC89CD3158B /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				F8D723FB9A524C9AB87E1FCB /* LifeDashboardWidgets.appex in Embed Foundation Extensions */,
+				C84457A419244E79AE01FE79 /* LifeDashboardWidgets.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,55 +69,54 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		99375B629FCB449FA905411E /* LifeDashboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LifeDashboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		C8BB3381A856499A8449485D /* LifeDashboardWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "LifeDashboardWidgets.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		6AA27BDBD5D04377A3418010 /* AppMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppMain.swift"; sourceTree = "<group>"; };
-		960B614BECC647129C96F8B2 /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItem.swift"; sourceTree = "<group>"; };
-		D4B8C983A6C64C4BB93BC3F1 /* HealthSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HealthSummary.swift"; sourceTree = "<group>"; };
-		E9B4D29B3C194D27A91D1DB5 /* WeatherData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeatherData.swift"; sourceTree = "<group>"; };
-		B8CFD8B4E0EB47EEA85B282E /* FocusSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusSession.swift"; sourceTree = "<group>"; };
-		33351E85AA3C4822BC3A90C5 /* WeeklyReport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeeklyReport.swift"; sourceTree = "<group>"; };
-		825818844E094834ABAC765F /* PomodoroAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PomodoroAttributes.swift"; sourceTree = "<group>"; };
-		48716E8F35F348F8A8E293FA /* WaterReminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaterReminder.swift"; sourceTree = "<group>"; };
-		9DDA9F9D931749DA99074D0D /* WaterReminderAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaterReminderAttributes.swift"; sourceTree = "<group>"; };
-		F2F7BD5C4AAB49809F5151A1 /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RootTabView.swift"; sourceTree = "<group>"; };
-		77E96D328AC740A694A21FFB /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DashboardView.swift"; sourceTree = "<group>"; };
-		5B8F83A95AC6487F9C125AF3 /* TodoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoListView.swift"; sourceTree = "<group>"; };
-		51C7C23415264DB4B8A98EFE /* TodoEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoEditorView.swift"; sourceTree = "<group>"; };
-		4F334D374EB64E0D91E93225 /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StatisticsView.swift"; sourceTree = "<group>"; };
-		48B5D7D2CA5C4768B7A2C8C9 /* WaterReminderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaterReminderDetailView.swift"; sourceTree = "<group>"; };
-		53C0BEAD2C694B6D8EBF5A54 /* CardStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CardStyle.swift"; sourceTree = "<group>"; };
-		3E4B6C9DC4844721A22469C4 /* WeatherCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeatherCard.swift"; sourceTree = "<group>"; };
-		B1072C83471544B893CB1D97 /* PomodoroCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PomodoroCard.swift"; sourceTree = "<group>"; };
-		9200CF43730A42B3B7FF7873 /* HealthSummaryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HealthSummaryCard.swift"; sourceTree = "<group>"; };
-		12AD0E7CB42641D68AFA1517 /* StepTrendCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StepTrendCard.swift"; sourceTree = "<group>"; };
-		B831F8183A554D80B2111DC6 /* WaterReminderCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaterReminderCard.swift"; sourceTree = "<group>"; };
-		B3D91ECCF9814B308ECFCB4A /* PomodoroViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PomodoroViewModel.swift"; sourceTree = "<group>"; };
-		EC377E5CD84440C185F60374 /* HealthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HealthService.swift"; sourceTree = "<group>"; };
-		B58DB075C9654964AB5A960C /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeatherService.swift"; sourceTree = "<group>"; };
-		770D455738504B98B7D977B1 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationService.swift"; sourceTree = "<group>"; };
-		DA5B530159854DD7873E77F2 /* WaterReminderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaterReminderService.swift"; sourceTree = "<group>"; };
-		0521CC52B85C44A1844EDC76 /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Formatters.swift"; sourceTree = "<group>"; };
-		B251EF42171844368EC14834 /* Color+App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+App.swift"; sourceTree = "<group>"; };
-		FD6484FD736E440F84204BBD /* WeatherAdvice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeatherAdvice.swift"; sourceTree = "<group>"; };
-		8118624BB5DB4C82825AD806 /* OpenMeteoClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OpenMeteoClient.swift"; sourceTree = "<group>"; };
-		C8BFF5D41E0A45A1B7BFF372 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
-		84ACD1AE4EB24C36AB154590 /* LifeDashboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "LifeDashboard.entitlements"; sourceTree = "<group>"; };
-		F0FC344753F84808B7E1F341 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
-		692CCEAEBCFB4FC29941E5F6 /* LifeDashboardWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LifeDashboardWidgetBundle.swift"; sourceTree = "<group>"; };
-		A4E03296F48148CA9B00285C /* GalaxyWeatherWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GalaxyWeatherWidget.swift"; sourceTree = "<group>"; };
-		D2621BAD59874A49B237DCDF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
+		A1DB10FC5E9444DDA60AD0A1 /* LifeDashboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LifeDashboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E14E819550354C118D79B0AF /* LifeDashboardWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "LifeDashboardWidgets.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0E07C25AD6864AFEB2BCEE2A /* AppMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppMain.swift"; sourceTree = "<group>"; };
+		F8A052C73BAC42529F300356 /* TodoItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoItem.swift"; sourceTree = "<group>"; };
+		134A59DD5B0B4412A670D6B7 /* HealthSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HealthSummary.swift"; sourceTree = "<group>"; };
+		0E084B7ED5D749F39B788C71 /* WeatherData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeatherData.swift"; sourceTree = "<group>"; };
+		B7129B5B9493497ABE09BA4E /* FocusSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FocusSession.swift"; sourceTree = "<group>"; };
+		BEBB1089D5634564843DCB3C /* WeeklyReport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeeklyReport.swift"; sourceTree = "<group>"; };
+		985488D8CC3744C2A075D4BB /* PomodoroAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PomodoroAttributes.swift"; sourceTree = "<group>"; };
+		6D35AF60A76F446B85E7595C /* WaterReminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaterReminder.swift"; sourceTree = "<group>"; };
+		465BEB1CD456465CAE2D834E /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RootTabView.swift"; sourceTree = "<group>"; };
+		229DD63B36E1464D9D98BD01 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DashboardView.swift"; sourceTree = "<group>"; };
+		950F8EC2C7224F41927EBA8F /* TodoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoListView.swift"; sourceTree = "<group>"; };
+		7F7BD918E68B478BA7F90530 /* TodoEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TodoEditorView.swift"; sourceTree = "<group>"; };
+		461F3A18063C4B76BD3240FC /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StatisticsView.swift"; sourceTree = "<group>"; };
+		FA62AA72B99A4B609CBED654 /* WaterReminderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaterReminderDetailView.swift"; sourceTree = "<group>"; };
+		055AD17881C54D5CBF16D59D /* CardStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CardStyle.swift"; sourceTree = "<group>"; };
+		945EE7FD34334A9396ACF07B /* WeatherCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeatherCard.swift"; sourceTree = "<group>"; };
+		8624E8A5425D47998C870AF4 /* PomodoroCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PomodoroCard.swift"; sourceTree = "<group>"; };
+		EC5FEA58FDE7487594A6C1B7 /* HealthSummaryCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HealthSummaryCard.swift"; sourceTree = "<group>"; };
+		78487BEB573949B5AEB86634 /* StepTrendCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StepTrendCard.swift"; sourceTree = "<group>"; };
+		5012CE70C1AD4BD6ACEB4A19 /* WaterReminderCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaterReminderCard.swift"; sourceTree = "<group>"; };
+		C9707666B6FF40508B3E7ED3 /* PomodoroViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PomodoroViewModel.swift"; sourceTree = "<group>"; };
+		C1FAFBB681B84C7CA3F935D4 /* HealthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HealthService.swift"; sourceTree = "<group>"; };
+		5C1CCD730E964AD0B4CF4C11 /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeatherService.swift"; sourceTree = "<group>"; };
+		8FABC443DF9B4A638A3C50EA /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NotificationService.swift"; sourceTree = "<group>"; };
+		BEE653D4ECEF4AFF85093218 /* WaterReminderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaterReminderService.swift"; sourceTree = "<group>"; };
+		696597FFB8CF4A4183BE45AC /* Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Formatters.swift"; sourceTree = "<group>"; };
+		BD090392A61542C99C3D0250 /* Color+App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+App.swift"; sourceTree = "<group>"; };
+		DF57F6538EED45E3A8606750 /* WeatherAdvice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WeatherAdvice.swift"; sourceTree = "<group>"; };
+		4539F7C91D554FAD9957EA36 /* OpenMeteoClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OpenMeteoClient.swift"; sourceTree = "<group>"; };
+		E8176BBB0C1242758C8749A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
+		97CDB2D97D834BC2ABF10E23 /* LifeDashboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "LifeDashboard.entitlements"; sourceTree = "<group>"; };
+		67248A58E480477194EDB390 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
+		D2DAC99D0900477FA5BCE4A5 /* LifeDashboardWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LifeDashboardWidgetBundle.swift"; sourceTree = "<group>"; };
+		0C4FF168428A40D7AA9E8B92 /* GalaxyWeatherWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GalaxyWeatherWidget.swift"; sourceTree = "<group>"; };
+		79B1530DBD6048D9AC177FC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		110BE91E0C2A402A8D273E8E /* Frameworks */ = {
+		E66B9D2F5519472BB41EE683 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B71B974A2B4D4B0787B683C4 /* Frameworks */ = {
+		ABA27951132148ECA6EE4468 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -129,124 +126,123 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		6DFCD368297646E5BBD9A086 = {
+		AC4E0D70EF3C4C199C4F3DBD = {
 			isa = PBXGroup;
 			children = (
-				1262BA061CAA493ABCBE428F /* LifeDashboard */,
-				165FBCF606D14BB99286028F /* LifeDashboardWidgets */,
-				9C78263052C04B4F926317EC /* Products */,
-				3AE7018C3C4C405DA76A590B /* Frameworks */,
+				E78B59027C774D13A06C9384 /* LifeDashboard */,
+				26BC4D7A23B5473EA7A80AAC /* LifeDashboardWidgets */,
+				4F63E74613F74D83830D4E6C /* Products */,
+				1B220C0546924894A6332240 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
-		1262BA061CAA493ABCBE428F = {
+		E78B59027C774D13A06C9384 = {
 			isa = PBXGroup;
 			children = (
-				6AA27BDBD5D04377A3418010 /* AppMain.swift */,
-				C8BFF5D41E0A45A1B7BFF372 /* Info.plist */,
-				84ACD1AE4EB24C36AB154590 /* LifeDashboard.entitlements */,
-				F0FC344753F84808B7E1F341 /* Assets.xcassets */,
-				D1691FC7282745BE8FE4D58E /* Models */,
-				789FB8E9EEAA4A118927FE3D /* Views */,
-				574F0208B0F645C9944334E2 /* ViewModels */,
-				024E040C5DA74467908260E0 /* Services */,
-				01E2D4178EA748EDA6C890C1 /* Utilities */,
+				0E07C25AD6864AFEB2BCEE2A /* AppMain.swift */,
+				E8176BBB0C1242758C8749A0 /* Info.plist */,
+				97CDB2D97D834BC2ABF10E23 /* LifeDashboard.entitlements */,
+				67248A58E480477194EDB390 /* Assets.xcassets */,
+				5EFDFDE329F44AC4AA00CBCA /* Models */,
+				D01A3E873A5E45718EEF9F0E /* Views */,
+				63A7317048AE46839FBDB926 /* ViewModels */,
+				E1FCEA4D47144051A30A5136 /* Services */,
+				969ADBB20AE34E4981079E3B /* Utilities */,
 			);
 			path = LifeDashboard;
 			sourceTree = "<group>";
 		};
-		D1691FC7282745BE8FE4D58E /* Models */ = {
+		5EFDFDE329F44AC4AA00CBCA /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				960B614BECC647129C96F8B2 /* TodoItem.swift */,
-				D4B8C983A6C64C4BB93BC3F1 /* HealthSummary.swift */,
-				E9B4D29B3C194D27A91D1DB5 /* WeatherData.swift */,
-				B8CFD8B4E0EB47EEA85B282E /* FocusSession.swift */,
-				33351E85AA3C4822BC3A90C5 /* WeeklyReport.swift */,
-				825818844E094834ABAC765F /* PomodoroAttributes.swift */,
-				48716E8F35F348F8A8E293FA /* WaterReminder.swift */,
-				9DDA9F9D931749DA99074D0D /* WaterReminderAttributes.swift */,
+				F8A052C73BAC42529F300356 /* TodoItem.swift */,
+				134A59DD5B0B4412A670D6B7 /* HealthSummary.swift */,
+				0E084B7ED5D749F39B788C71 /* WeatherData.swift */,
+				B7129B5B9493497ABE09BA4E /* FocusSession.swift */,
+				BEBB1089D5634564843DCB3C /* WeeklyReport.swift */,
+				985488D8CC3744C2A075D4BB /* PomodoroAttributes.swift */,
+				6D35AF60A76F446B85E7595C /* WaterReminder.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
 		};
-		789FB8E9EEAA4A118927FE3D /* Views */ = {
+		D01A3E873A5E45718EEF9F0E /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				F2F7BD5C4AAB49809F5151A1 /* RootTabView.swift */,
-				77E96D328AC740A694A21FFB /* DashboardView.swift */,
-				5B8F83A95AC6487F9C125AF3 /* TodoListView.swift */,
-				51C7C23415264DB4B8A98EFE /* TodoEditorView.swift */,
-				4F334D374EB64E0D91E93225 /* StatisticsView.swift */,
-				48B5D7D2CA5C4768B7A2C8C9 /* WaterReminderDetailView.swift */,
-				B5D2DAD53D834AFA9A545B22 /* Components */,
+				465BEB1CD456465CAE2D834E /* RootTabView.swift */,
+				229DD63B36E1464D9D98BD01 /* DashboardView.swift */,
+				950F8EC2C7224F41927EBA8F /* TodoListView.swift */,
+				7F7BD918E68B478BA7F90530 /* TodoEditorView.swift */,
+				461F3A18063C4B76BD3240FC /* StatisticsView.swift */,
+				FA62AA72B99A4B609CBED654 /* WaterReminderDetailView.swift */,
+				61EC7E3D48374498A2EA32A6 /* Components */,
 			);
 			path = Views;
 			sourceTree = "<group>";
 		};
-		574F0208B0F645C9944334E2 /* ViewModels */ = {
+		63A7317048AE46839FBDB926 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				B3D91ECCF9814B308ECFCB4A /* PomodoroViewModel.swift */,
+				C9707666B6FF40508B3E7ED3 /* PomodoroViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
 		};
-		024E040C5DA74467908260E0 /* Services */ = {
+		E1FCEA4D47144051A30A5136 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				EC377E5CD84440C185F60374 /* HealthService.swift */,
-				B58DB075C9654964AB5A960C /* WeatherService.swift */,
-				770D455738504B98B7D977B1 /* NotificationService.swift */,
-				DA5B530159854DD7873E77F2 /* WaterReminderService.swift */,
+				C1FAFBB681B84C7CA3F935D4 /* HealthService.swift */,
+				5C1CCD730E964AD0B4CF4C11 /* WeatherService.swift */,
+				8FABC443DF9B4A638A3C50EA /* NotificationService.swift */,
+				BEE653D4ECEF4AFF85093218 /* WaterReminderService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
 		};
-		01E2D4178EA748EDA6C890C1 /* Utilities */ = {
+		969ADBB20AE34E4981079E3B /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				0521CC52B85C44A1844EDC76 /* Formatters.swift */,
-				B251EF42171844368EC14834 /* Color+App.swift */,
-				FD6484FD736E440F84204BBD /* WeatherAdvice.swift */,
-				8118624BB5DB4C82825AD806 /* OpenMeteoClient.swift */,
+				696597FFB8CF4A4183BE45AC /* Formatters.swift */,
+				BD090392A61542C99C3D0250 /* Color+App.swift */,
+				DF57F6538EED45E3A8606750 /* WeatherAdvice.swift */,
+				4539F7C91D554FAD9957EA36 /* OpenMeteoClient.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
 		};
-		B5D2DAD53D834AFA9A545B22 /* Components */ = {
+		61EC7E3D48374498A2EA32A6 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				53C0BEAD2C694B6D8EBF5A54 /* CardStyle.swift */,
-				3E4B6C9DC4844721A22469C4 /* WeatherCard.swift */,
-				B1072C83471544B893CB1D97 /* PomodoroCard.swift */,
-				9200CF43730A42B3B7FF7873 /* HealthSummaryCard.swift */,
-				12AD0E7CB42641D68AFA1517 /* StepTrendCard.swift */,
-				B831F8183A554D80B2111DC6 /* WaterReminderCard.swift */,
+				055AD17881C54D5CBF16D59D /* CardStyle.swift */,
+				945EE7FD34334A9396ACF07B /* WeatherCard.swift */,
+				8624E8A5425D47998C870AF4 /* PomodoroCard.swift */,
+				EC5FEA58FDE7487594A6C1B7 /* HealthSummaryCard.swift */,
+				78487BEB573949B5AEB86634 /* StepTrendCard.swift */,
+				5012CE70C1AD4BD6ACEB4A19 /* WaterReminderCard.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
 		};
-		165FBCF606D14BB99286028F = {
+		26BC4D7A23B5473EA7A80AAC = {
 			isa = PBXGroup;
 			children = (
-				692CCEAEBCFB4FC29941E5F6 /* LifeDashboardWidgetBundle.swift */,
-				A4E03296F48148CA9B00285C /* GalaxyWeatherWidget.swift */,
-				D2621BAD59874A49B237DCDF /* Info.plist */,
+				D2DAC99D0900477FA5BCE4A5 /* LifeDashboardWidgetBundle.swift */,
+				0C4FF168428A40D7AA9E8B92 /* GalaxyWeatherWidget.swift */,
+				79B1530DBD6048D9AC177FC3 /* Info.plist */,
 			);
 			path = LifeDashboardWidgets;
 			sourceTree = "<group>";
 		};
-		9C78263052C04B4F926317EC /* Products */ = {
+		4F63E74613F74D83830D4E6C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				99375B629FCB449FA905411E /* LifeDashboard.app */,
-				C8BB3381A856499A8449485D /* LifeDashboardWidgets.appex */,
+				A1DB10FC5E9444DDA60AD0A1 /* LifeDashboard.app */,
+				E14E819550354C118D79B0AF /* LifeDashboardWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		3AE7018C3C4C405DA76A590B /* Frameworks */ = {
+		1B220C0546924894A6332240 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -256,32 +252,32 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C06BCF12916C4FC496C48946 /* LifeDashboard */ = {
+		BD18EF203D44497DBA2ED734 /* LifeDashboard */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C81D6B47BDD14B4B92253136 /* Build configuration list for PBXNativeTarget "LifeDashboard" */;
+			buildConfigurationList = BDB387DF12B743BB8456A92A /* Build configuration list for PBXNativeTarget "LifeDashboard" */;
 			buildPhases = (
-				52852174614E48619DC16DC5 /* Sources */,
-				110BE91E0C2A402A8D273E8E /* Frameworks */,
-				5B96584415A94FC9B8DE9AA9 /* Resources */,
-				DBE646A09B524533B50DD36B /* Embed Foundation Extensions */,
+				E1875522E28549BA8165585D /* Sources */,
+				E66B9D2F5519472BB41EE683 /* Frameworks */,
+				B070D831256C4F65A82091F1 /* Resources */,
+				026CDA5C47F64CC89CD3158B /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				E3F0FDD763564B61A5129419 /* PBXTargetDependency */,
+				57A95FE12525430BAE8CDDF1 /* PBXTargetDependency */,
 			);
 			name = LifeDashboard;
 			productName = LifeDashboard;
-			productReference = 99375B629FCB449FA905411E /* LifeDashboard.app */;
+			productReference = A1DB10FC5E9444DDA60AD0A1 /* LifeDashboard.app */;
 			productType = "com.apple.product-type.application";
 		};
-		75D08A10FA684140B04150F8 /* LifeDashboardWidgets */ = {
+		BEC8396012D7470B8ABBF5A9 /* LifeDashboardWidgets */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9B4BDF40AA304E2082DECF96 /* Build configuration list for PBXNativeTarget "LifeDashboardWidgets" */;
+			buildConfigurationList = AE6820B3CBBD4586BA86FE4D /* Build configuration list for PBXNativeTarget "LifeDashboardWidgets" */;
 			buildPhases = (
-				12AF36708D174FEE85FCBE57 /* Sources */,
-				B71B974A2B4D4B0787B683C4 /* Frameworks */,
-				BE299EA8087A49E0BD5471DD /* Resources */,
+				F7A8722BA60C4EE29CBC5540 /* Sources */,
+				ABA27951132148ECA6EE4468 /* Frameworks */,
+				199F2B72F387413388E437E7 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -289,28 +285,28 @@
 			);
 			name = LifeDashboardWidgets;
 			productName = LifeDashboardWidgets;
-			productReference = C8BB3381A856499A8449485D /* LifeDashboardWidgets.appex */;
+			productReference = E14E819550354C118D79B0AF /* LifeDashboardWidgets.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		79F3AD45A89A4565ADB9E605 /* Project object */ = {
+		5E82CD468B2341A298F1C091 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
-					C06BCF12916C4FC496C48946 = {
+					BD18EF203D44497DBA2ED734 = {
 						CreatedOnToolsVersion = 15.0;
 					};
-					75D08A10FA684140B04150F8 = {
+					BEC8396012D7470B8ABBF5A9 = {
 						CreatedOnToolsVersion = 15.0;
 					};
 				};
 			};
-			buildConfigurationList = 441D3CA9A06F4EACB3F8892E /* Build configuration list for PBXProject "LifeDashboard" */;
+			buildConfigurationList = 9D2FE26D0ABE4E399E20E0C1 /* Build configuration list for PBXProject "LifeDashboard" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -319,27 +315,27 @@
 				Base,
 				zh-Hans,
 			);
-			mainGroup = 6DFCD368297646E5BBD9A086;
-			productRefGroup = 9C78263052C04B4F926317EC /* Products */;
+			mainGroup = AC4E0D70EF3C4C199C4F3DBD;
+			productRefGroup = 4F63E74613F74D83830D4E6C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C06BCF12916C4FC496C48946 /* LifeDashboard */,
-				75D08A10FA684140B04150F8 /* LifeDashboardWidgets */,
+				BD18EF203D44497DBA2ED734 /* LifeDashboard */,
+				BEC8396012D7470B8ABBF5A9 /* LifeDashboardWidgets */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		5B96584415A94FC9B8DE9AA9 /* Resources */ = {
+		B070D831256C4F65A82091F1 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4FB46861355F4AF583FA770D /* Assets.xcassets in Resources */,
+				827771F96A0F4879BABF2190 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BE299EA8087A49E0BD5471DD /* Resources */ = {
+		199F2B72F387413388E437E7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -349,67 +345,65 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		52852174614E48619DC16DC5 /* Sources */ = {
+		E1875522E28549BA8165585D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FCAF542D17DA47CB82822AC9 /* AppMain.swift in Sources */,
-				BA6A1C7501CA49688BBFFB4F /* TodoItem.swift in Sources */,
-				EB6A8AA266584408A076CCEB /* HealthSummary.swift in Sources */,
-				D5CEE139A2B546119770771D /* WeatherData.swift in Sources */,
-				FA9B01B55B274F2286D00D10 /* FocusSession.swift in Sources */,
-				651CD8842D5D4B07B86AC82D /* WeeklyReport.swift in Sources */,
-				65009EFFB4FB4BCA8EDB89C1 /* PomodoroAttributes.swift in Sources */,
-				EB01F1F4E7E148C2AEEAF616 /* WaterReminder.swift in Sources */,
-				2712A25D85704B5591964003 /* WaterReminderAttributes.swift in Sources */,
-				E5373BF876FC44A381DB3791 /* RootTabView.swift in Sources */,
-				E971E8DBCE144219B440111C /* DashboardView.swift in Sources */,
-				0249C5E8ABDE49A78FA11F56 /* TodoListView.swift in Sources */,
-				F6950C7F3EBF48F3ABC42D59 /* TodoEditorView.swift in Sources */,
-				51FAE84053BB476682FCEF58 /* StatisticsView.swift in Sources */,
-				B75170EC6BF4426FB598EEB2 /* WaterReminderDetailView.swift in Sources */,
-				E89B66DB64234CDE8D6E4957 /* CardStyle.swift in Sources */,
-				735954E4F6564DCD8754D8F5 /* WeatherCard.swift in Sources */,
-				E88AFF26D96D47E1BB26A3AE /* PomodoroCard.swift in Sources */,
-				3984B04DE9E54EFBB994074E /* HealthSummaryCard.swift in Sources */,
-				60C349336D404AC9B7CB6B1A /* StepTrendCard.swift in Sources */,
-				A6B7D05DEB9E401782744FED /* WaterReminderCard.swift in Sources */,
-				6A5833808FD14AAC9BE2D5EE /* PomodoroViewModel.swift in Sources */,
-				E693FCCEF0404B00B37221D0 /* HealthService.swift in Sources */,
-				820F3F4907984AE8A3E85CF6 /* WeatherService.swift in Sources */,
-				F00AE27E78E34C968AF43EF9 /* NotificationService.swift in Sources */,
-				60E734191748471FA5BDC010 /* WaterReminderService.swift in Sources */,
-				A587B95F5C6E457891CCF1CF /* Formatters.swift in Sources */,
-				5C74CF96AF994FB4B519E53E /* Color+App.swift in Sources */,
-				7C55925950F447489C3ED74A /* WeatherAdvice.swift in Sources */,
-				6DD8093D620E4BEB9144F874 /* OpenMeteoClient.swift in Sources */,
+				ED4CCFD76C0143858F11A34B /* AppMain.swift in Sources */,
+				4A699683707548018A2F709D /* TodoItem.swift in Sources */,
+				3C5CD526A64C4D889CDBCC13 /* HealthSummary.swift in Sources */,
+				CA1ADEB733994D6683008194 /* WeatherData.swift in Sources */,
+				5F8BB5FBBB44408EA9AA7D32 /* FocusSession.swift in Sources */,
+				DDCFD55165B749AEB0887499 /* WeeklyReport.swift in Sources */,
+				B9475A4A963F415CA5E76D1D /* PomodoroAttributes.swift in Sources */,
+				DDD13E5FB1C743D399356126 /* WaterReminder.swift in Sources */,
+				75295E4CDF51403089769611 /* RootTabView.swift in Sources */,
+				56EDD10BF0C846F89AA42960 /* DashboardView.swift in Sources */,
+				4939B4E529704C37A10BED6E /* TodoListView.swift in Sources */,
+				82680D16F4B9462FB1A8B8B2 /* TodoEditorView.swift in Sources */,
+				6BD72A66F0D948B885FA1888 /* StatisticsView.swift in Sources */,
+				29E19C527640482EA480EBE0 /* WaterReminderDetailView.swift in Sources */,
+				A3636156B9B548BAB0BBCB9A /* CardStyle.swift in Sources */,
+				17E8B8BFFD834933A0DB6576 /* WeatherCard.swift in Sources */,
+				FE17D9ABAF09400DA6065B82 /* PomodoroCard.swift in Sources */,
+				B9CC76995F21403490D5417D /* HealthSummaryCard.swift in Sources */,
+				BC729720051541698BD75274 /* StepTrendCard.swift in Sources */,
+				919E0378273B46219BB2C666 /* WaterReminderCard.swift in Sources */,
+				0A34163C925446E8AEB0BF2B /* PomodoroViewModel.swift in Sources */,
+				35E3860980334E9A81DA87BB /* HealthService.swift in Sources */,
+				8F07C3CA35BD4B529B4D03C1 /* WeatherService.swift in Sources */,
+				2FFC7B9EE11446A481DB58B9 /* NotificationService.swift in Sources */,
+				C1903B3D9AF2434A913E2E33 /* WaterReminderService.swift in Sources */,
+				B1C105FA60814CCA8873E9E8 /* Formatters.swift in Sources */,
+				CAB613C6111C4ECDA2135D46 /* Color+App.swift in Sources */,
+				22B14AF33BB7457DBB96114E /* WeatherAdvice.swift in Sources */,
+				19DDE52EFC9040D1B02AE460 /* OpenMeteoClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		12AF36708D174FEE85FCBE57 /* Sources */ = {
+		F7A8722BA60C4EE29CBC5540 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				561FD85F47BE432CB897E757 /* LifeDashboardWidgetBundle.swift in Sources */,
-				47DC7222C1E440B7AB2DAB1C /* GalaxyWeatherWidget.swift in Sources */,
-				F0606BBB1DFB427FA99DB148 /* PomodoroAttributes.swift in Sources */,
-				53C8D73789044537B737ADFE /* WaterReminderAttributes.swift in Sources */,
-				A578607E014D4B9AA63F8CCD /* OpenMeteoClient.swift in Sources */,
+				240999CAD02D4C3C970F3CE4 /* LifeDashboardWidgetBundle.swift in Sources */,
+				D07C3D5871214030AEB10085 /* GalaxyWeatherWidget.swift in Sources */,
+				3FC6480C5651423BA89A38A7 /* PomodoroAttributes.swift in Sources */,
+				EDAAD3B6B04542D198D1E305 /* OpenMeteoClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		E3F0FDD763564B61A5129419 /* PBXTargetDependency */ = {
+		57A95FE12525430BAE8CDDF1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 75D08A10FA684140B04150F8 /* LifeDashboardWidgets */;
-			targetProxy = D7C13590CBB6459680D32632 /* PBXContainerItemProxy */;
+			target = BEC8396012D7470B8ABBF5A9 /* LifeDashboardWidgets */;
+			targetProxy = 8C686CF0C7934F1AB4EE611B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		8321927C374E4C47892BF107 /* Debug */ = {
+		3F8C0E631FD441ACB7131E5C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -458,7 +452,7 @@
 			};
 			name = Debug;
 		};
-		388CBB77A2E443FAAC6789B6 /* Release */ = {
+		79A44EC46196426A9E8A0D9E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -508,7 +502,7 @@
 			};
 			name = Release;
 		};
-		CF4CF4EAF61D410AB1216513 /* Debug */ = {
+		3E4D65C01A8344AA8DD3575A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -531,7 +525,7 @@
 			};
 			name = Debug;
 		};
-		AEA81AC267D5455494560EB2 /* Release */ = {
+		F500CE8E9D7149E9A232E360 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -554,7 +548,7 @@
 			};
 			name = Release;
 		};
-		472F86FF8E1E4CA79C68A0D1 /* Debug */ = {
+		D52C33F6A94A49D985EC633C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
@@ -575,7 +569,7 @@
 			};
 			name = Debug;
 		};
-		190A6B3253124E4C908164B9 /* Release */ = {
+		AA1F3C985DC14727A3843994 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
@@ -599,34 +593,34 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		441D3CA9A06F4EACB3F8892E /* Build configuration list for PBXProject "LifeDashboard" */ = {
+		9D2FE26D0ABE4E399E20E0C1 /* Build configuration list for PBXProject "LifeDashboard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8321927C374E4C47892BF107 /* Debug */,
-				388CBB77A2E443FAAC6789B6 /* Release */,
+				3F8C0E631FD441ACB7131E5C /* Debug */,
+				79A44EC46196426A9E8A0D9E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C81D6B47BDD14B4B92253136 /* Build configuration list for PBXNativeTarget "LifeDashboard" */ = {
+		BDB387DF12B743BB8456A92A /* Build configuration list for PBXNativeTarget "LifeDashboard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CF4CF4EAF61D410AB1216513 /* Debug */,
-				AEA81AC267D5455494560EB2 /* Release */,
+				3E4D65C01A8344AA8DD3575A /* Debug */,
+				F500CE8E9D7149E9A232E360 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9B4BDF40AA304E2082DECF96 /* Build configuration list for PBXNativeTarget "LifeDashboardWidgets" */ = {
+		AE6820B3CBBD4586BA86FE4D /* Build configuration list for PBXNativeTarget "LifeDashboardWidgets" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				472F86FF8E1E4CA79C68A0D1 /* Debug */,
-				190A6B3253124E4C908164B9 /* Release */,
+				D52C33F6A94A49D985EC633C /* Debug */,
+				AA1F3C985DC14727A3843994 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 79F3AD45A89A4565ADB9E605 /* Project object */;
+	rootObject = 5E82CD468B2341A298F1C091 /* Project object */;
 }
