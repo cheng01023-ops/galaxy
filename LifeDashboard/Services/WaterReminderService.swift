@@ -39,6 +39,29 @@ final class WaterReminderService: ObservableObject {
         return reminders.first { $0.hour * 60 + $0.minute > minutes } ?? reminders.first
     }
 
+    /// 下一个提醒对应的具体日期；若今天所有提醒都已过点，则顺延到明天。
+    func nextReminderDate(after date: Date = .now) -> Date? {
+        guard let next = nextReminder(after: date) else { return nil }
+        let calendar = Calendar.current
+        var candidate = calendar.date(
+            bySettingHour: next.hour,
+            minute: next.minute,
+            second: 0,
+            of: date
+        ) ?? date
+        if candidate <= date {
+            candidate = calendar.date(byAdding: .day, value: 1, to: candidate) ?? candidate
+        }
+        return candidate
+    }
+
+    /// 今天已经到点的提醒个数。
+    func passedRemindersCount(on date: Date = .now) -> Int {
+        let minutes = Calendar.current.component(.hour, from: date) * 60
+            + Calendar.current.component(.minute, from: date)
+        return reminders.filter { $0.hour * 60 + $0.minute <= minutes }.count
+    }
+
     // MARK: - 每日通知
 
     private static func sorted(_ list: [WaterReminder]) -> [WaterReminder] {
