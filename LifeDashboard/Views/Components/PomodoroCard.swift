@@ -88,9 +88,9 @@ struct PomodoroTimerView: View {
         }
     }
 
-    /// 与默认卡片完全一致的内容布局，仅颜色随主题变化。
+    /// 内容布局与默认卡片一致，仅颜色随主题变化；尺寸与其他卡片协调。
     private var content: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 12) {
             header
             phaseRow
             timerText
@@ -123,39 +123,69 @@ struct PomodoroTimerView: View {
 
     private var timerText: some View {
         Text(timeString(viewModel.remainingSeconds))
-            .font(.system(size: 40, weight: .bold, design: .rounded))
+            .font(.system(size: 46, weight: .bold, design: .rounded))
             .monospacedDigit()
             .foregroundStyle(isVivid ? Color.white : Color.primary)
             .contentTransition(.numericText())
     }
 
+    @ViewBuilder
     private var buttonRow: some View {
-        HStack(spacing: 10) {
-            Button {
-                viewModel.isRunning ? viewModel.pause() : viewModel.start()
-            } label: {
-                Label(viewModel.isRunning ? "暂停" : "开始",
-                      systemImage: viewModel.isRunning ? "pause.fill" : "play.fill")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(isVivid ? .white : .accentColor)
+        if isVivid {
+            HStack(spacing: 10) {
+                Button {
+                    viewModel.isRunning ? viewModel.pause() : viewModel.start()
+                } label: {
+                    Label(viewModel.isRunning ? "暂停" : "开始",
+                          systemImage: viewModel.isRunning ? "pause.fill" : "play.fill")
+                        .frame(maxWidth: .infinity)
+                        .foregroundStyle(Color.pomodoroAccent)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.white)
 
-            Button {
-                viewModel.reset()
-            } label: {
-                Label("重置", systemImage: "arrow.counterclockwise")
-                    .frame(maxWidth: .infinity)
+                Button {
+                    viewModel.reset()
+                } label: {
+                    Label("重置", systemImage: "arrow.counterclockwise")
+                        .frame(maxWidth: .infinity)
+                        .foregroundStyle(.white)
+                }
+                .buttonStyle(.bordered)
+                .tint(.white)
             }
-            .buttonStyle(.bordered)
-            .tint(isVivid ? .white : .accentColor)
+            .font(.subheadline)
+        } else {
+            HStack(spacing: 10) {
+                Button {
+                    viewModel.isRunning ? viewModel.pause() : viewModel.start()
+                } label: {
+                    Label(viewModel.isRunning ? "暂停" : "开始",
+                          systemImage: viewModel.isRunning ? "pause.fill" : "play.fill")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+
+                Button {
+                    viewModel.reset()
+                } label: {
+                    Label("重置", systemImage: "arrow.counterclockwise")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
+            .font(.subheadline)
         }
-        .font(.subheadline)
     }
 
     private func timeString(_ seconds: Int) -> String {
         String(format: "%02d:%02d", seconds / 60, seconds % 60)
     }
+}
+
+private extension Color {
+    /// 番茄红：鲜艳主题下主按钮的文字颜色。
+    static let pomodoroAccent = Color(red: 0.88, green: 0.25, blue: 0.19)
 }
 
 /// 番茄钟详情页：保留卡片全部功能，并支持自定义专注/休息倒计时时长。
