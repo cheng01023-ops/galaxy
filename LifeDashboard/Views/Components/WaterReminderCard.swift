@@ -7,6 +7,13 @@ struct WaterReminderCard: View {
     /// 时间轴最多展示的提醒个数，超出部分用 "+N" 表示。
     private let maxDots = 8
 
+    /// 卡片主渐变：青 → 蓝，贯穿标题、进度环与时间轴。
+    private let waterGradient = LinearGradient(
+        colors: [.cyan, .blue],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
+
     var body: some View {
         NavigationLink {
             WaterReminderDetailView()
@@ -28,16 +35,68 @@ struct WaterReminderCard: View {
                 timeRangeText
             }
         }
-        .cardStyle()
+        .padding(16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(cardBackground)
+        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+    }
+
+    // MARK: - 背景与装饰
+
+    /// 水蓝色渐变背景 + 底部气泡装饰，自动适配深色模式。
+    private var cardBackground: some View {
+        ZStack(alignment: .bottomTrailing) {
+            Color.cardBackground
+
+            LinearGradient(
+                colors: [Color.blue.opacity(0.16), Color.cyan.opacity(0.08), Color.clear],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+
+            bubbleDecorations
+                .padding(14)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+    }
+
+    private var bubbleDecorations: some View {
+        ZStack {
+            Circle()
+                .fill(Color.cyan.opacity(0.16))
+                .frame(width: 46, height: 46)
+                .offset(x: -8, y: -4)
+            Circle()
+                .fill(Color.blue.opacity(0.12))
+                .frame(width: 30, height: 30)
+                .offset(x: -30, y: 16)
+            Circle()
+                .fill(Color.teal.opacity(0.14))
+                .frame(width: 18, height: 18)
+                .offset(x: -2, y: 24)
+            Circle()
+                .fill(Color.blue.opacity(0.08))
+                .frame(width: 12, height: 12)
+                .offset(x: -22, y: 30)
+        }
+        .allowsHitTesting(false)
     }
 
     // MARK: - 标题
 
     private var header: some View {
-        HStack {
-            Label("喝水提醒", systemImage: "drop.fill")
+        HStack(spacing: 8) {
+            Image(systemName: "drop.fill")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white)
+                .frame(width: 26, height: 26)
+                .background(waterGradient, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+                .shadow(color: .blue.opacity(0.35), radius: 4, x: 0, y: 2)
+
+            Text("喝水提醒")
                 .font(.headline)
-                .foregroundStyle(.blue)
+                .foregroundStyle(.primary)
+
             Spacer()
             Image(systemName: "chevron.right")
                 .font(.footnote.weight(.semibold))
@@ -49,7 +108,7 @@ struct WaterReminderCard: View {
         VStack(spacing: 8) {
             Image(systemName: "drop.degreesign.slash")
                 .font(.title)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.blue.opacity(0.6))
             Text("还没有设置提醒")
                 .font(.subheadline)
                 .foregroundStyle(.primary)
@@ -75,13 +134,14 @@ struct WaterReminderCard: View {
                     Text(String(format: "%02d:%02d", next.hour, next.minute))
                         .font(.system(size: 28, weight: .bold, design: .rounded))
                         .monospacedDigit()
+                        .foregroundStyle(waterGradient)
                         .lineLimit(1)
                         .minimumScaleFactor(0.6)
                         .contentTransition(.numericText())
                 }
                 countdownText
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.blue)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
@@ -126,21 +186,23 @@ struct WaterReminderCard: View {
                 .trim(from: 0, to: progress)
                 .stroke(
                     LinearGradient(
-                        colors: [.cyan, .blue],
+                        colors: [.cyan, .blue, .indigo],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     ),
                     style: StrokeStyle(lineWidth: 8, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
+                .shadow(color: .blue.opacity(0.45), radius: 3, x: 0, y: 1)
                 .animation(.snappy, value: progress)
 
             VStack(spacing: 2) {
                 Image(systemName: "drop.fill")
-                    .font(.subheadline)
-                    .foregroundStyle(.blue)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(waterGradient)
                 Text("\(passed)/\(total)")
                     .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.blue)
                     .monospacedDigit()
             }
         }
@@ -153,9 +215,14 @@ struct WaterReminderCard: View {
         HStack(spacing: 4) {
             ForEach(Array(service.reminders.prefix(maxDots).enumerated()), id: \.element.id) { index, reminder in
                 let isPassed = index < service.passedRemindersCount()
-                Circle()
-                    .fill(isPassed ? Color.blue : Color(.tertiarySystemFill))
-                    .frame(width: 8, height: 8)
+                Group {
+                    if isPassed {
+                        Circle().fill(waterGradient)
+                    } else {
+                        Circle().fill(Color(.tertiarySystemFill))
+                    }
+                }
+                .frame(width: 8, height: 8)
             }
             if service.reminders.count > maxDots {
                 Text("+\(service.reminders.count - maxDots)")
@@ -186,7 +253,7 @@ struct WaterReminderCard: View {
         HStack(spacing: 4) {
             Image(systemName: "clock.arrow.circlepath")
                 .font(.caption2)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.blue)
             if let first = service.reminders.first, let last = service.reminders.last {
                 Text(String(format: "提醒时段 %02d:%02d - %02d:%02d",
                             first.hour, first.minute, last.hour, last.minute))
