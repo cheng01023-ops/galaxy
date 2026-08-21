@@ -78,8 +78,8 @@ struct DashboardView: View {
                 LazyVGrid(columns: columns, spacing: 12) {
                     ForEach(layout) { item in
                         cardView(for: item.kind)
-                            .gridCellColumns(item.size == .full ? 2 : 1)
-                            .frame(height: item.size == .half ? halfCardHeight : nil, alignment: .topLeading)
+                            .gridCellColumns(1)
+                            .frame(height: halfCardHeight, alignment: .topLeading)
                             .disabled(isEditing)
                             .overlay(alignment: .topTrailing) {
                                 if isEditing {
@@ -147,12 +147,6 @@ struct DashboardView: View {
                 Image(systemName: "arrow.down")
             }
             .disabled(isLast(item))
-
-            Button {
-                toggleSize(item)
-            } label: {
-                Image(systemName: item.size == .full ? "rectangle.split.1x2" : "rectangle.split.2x1")
-            }
         }
         .font(.subheadline.weight(.semibold))
         .padding(8)
