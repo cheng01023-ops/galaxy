@@ -92,7 +92,7 @@ struct DashboardView: View {
                 .padding(.vertical, 8)
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("仪表盘")
+            .navigationTitle("Galaxy")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(isEditing ? "完成" : "编辑") {
