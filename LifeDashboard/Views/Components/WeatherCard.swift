@@ -61,7 +61,7 @@ struct WeatherCard: View {
                         .font(.title2)
                         .foregroundStyle(.tint)
                     Text("\(Int(weather.temperature.rounded()))°")
-                        .font(.system(size: 42, weight: .bold, design: .rounded))
+                        .font(.system(size: 36, weight: .bold, design: .rounded))
                     Text(weather.condition)
                         .font(.title3)
                         .foregroundStyle(.secondary)
@@ -87,13 +87,6 @@ struct WeatherCard: View {
                     .font(.footnote)
                     .foregroundStyle(.secondary)
                     .padding(.top, 2)
-
-                HStack {
-                    Spacer()
-                    Label("查看详情", systemImage: "chevron.right")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
-                }
             } else if let error = weatherService.errorMessage {
                 Text(error)
                     .font(.footnote)
