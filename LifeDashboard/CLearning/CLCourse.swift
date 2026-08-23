@@ -78,6 +78,7 @@ final class CLAppStore: ObservableObject {
     @Published var track: CLTrack {
         didSet {
             defaults.set(track.rawValue, forKey: trackKey)
+            defaults.synchronize()
         }
     }
 
@@ -174,6 +175,7 @@ final class CLAppStore: ObservableObject {
         let k = key(track: t, day: day, item: item)
         checked[k] = !(checked[k] ?? false)
         defaults.set(checked, forKey: checkedKey)
+        defaults.synchronize()
     }
 
     func progress(track: CLTrack? = nil, day: Int) -> (done: Int, total: Int) {
