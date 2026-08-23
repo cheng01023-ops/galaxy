@@ -1,0 +1,95 @@
+import SwiftUI
+
+struct CLDayView: View {
+    let track: CLTrack
+    let day: CLCourseDay
+    @ObservedObject var store: CLAppStore
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
+                header
+                CLMarkdownView(blocks: store.blocks(track: track, day: day.id), dayID: day.id, track: track)
+                footer
+            }
+            .padding()
+        }
+        .navigationTitle(day.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .environmentObject(store)
+    }
+
+    private var header: some View {
+        HStack(spacing: 16) {
+            CLProgressRing(progress: progressValue)
+                .frame(width: 68, height: 68)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(day.title)
+                    .font(.title3.bold())
+                Text(day.subtitle)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                Text("打卡 \(progress.done)/\(progress.total)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            Spacer()
+        }
+        .padding()
+        .background(Color(uiColor: .secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    @ViewBuilder
+    private var footer: some View {
+        if let previous = previousDay {
+            NavigationLink { CLDayView(track: track, day: previous, store: store) } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "chevron.left")
+                    Text("上一课：\(previous.title)")
+                        .font(.subheadline.weight(.semibold))
+                        .lineLimit(nil)
+                        .multilineTextAlignment(.leading)
+                    Spacer(minLength: 0)
+                }
+            }
+            .buttonStyle(.bordered)
+        }
+
+        if let next = nextDay {
+            NavigationLink { CLDayView(track: track, day: next, store: store) } label: {
+                HStack(spacing: 8) {
+                    Spacer(minLength: 0)
+                    Text("下一课：\(next.title) · \(next.subtitle)")
+                        .font(.subheadline.weight(.semibold))
+                        .lineLimit(nil)
+                        .multilineTextAlignment(.trailing)
+                    Image(systemName: "chevron.right")
+                }
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.accentColor)
+        }
+    }
+
+    private var previousDay: CLCourseDay? {
+        let days = store.days(for: track)
+        guard let index = days.firstIndex(of: day), index > 0 else { return nil }
+        return days[index - 1]
+    }
+
+    private var nextDay: CLCourseDay? {
+        let days = store.days(for: track)
+        guard let index = days.firstIndex(of: day), index < days.count - 1 else { return nil }
+        return days[index + 1]
+    }
+
+    private var progress: (done: Int, total: Int) {
+        store.progress(track: track, day: day.id)
+    }
+
+    private var progressValue: Double {
+        progress.total > 0 ? Double(progress.done) / Double(progress.total) : 0
+    }
+}
