@@ -96,18 +96,16 @@ final class CLAppStore: ObservableObject {
         self.defaults = .standard
         self.track = CLTrack(rawValue: defaults.string(forKey: trackKey) ?? "") ?? .xcode
 
-        var loaded = defaults.dictionary(forKey: checkedKey) as? [String: Bool] ?? [:]
-        // 迁移旧数据（老版本 key 为 "天数|内容"，默认属于 Xcode 板块）
-        var migrated: [String: Bool] = [:]
+        let loaded = defaults.dictionary(forKey: checkedKey) as? [String: Bool] ?? [:]
+        // 修复历史遗留的重复前缀：把 "xcode|Xcode|..." / "vscode|Xcode|..." 还原为 "Xcode|..."
+        var cleaned: [String: Bool] = [:]
         for (k, v) in loaded {
-            if k.hasPrefix("xcode|") || k.hasPrefix("vscode|") {
-                migrated[k] = v
-            } else {
-                migrated["xcode|" + k] = v
-            }
+            var key = k
+            if key.hasPrefix("xcode|") { key = String(key.dropFirst("xcode|".count)) }
+            if key.hasPrefix("vscode|") { key = String(key.dropFirst("vscode|".count)) }
+            cleaned[key] = v
         }
-        loaded = migrated
-        self.checked = loaded
+        self.checked = cleaned
 
         for t in CLTrack.allCases {
             let days = CLCourseDay.all(for: t)
