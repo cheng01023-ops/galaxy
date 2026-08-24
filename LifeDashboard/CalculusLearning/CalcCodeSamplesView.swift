@@ -42,7 +42,7 @@ struct CalcCodeSamplesView: View {
         NavigationStack {
             List(CalcCodeSample.all(for: store.track)) { sample in
                 NavigationLink {
-                    CalcCodeSampleDetail(sample: sample, track: store.track)
+                    CalcCodeSampleDetail(sample: sample, track: store.track, store: store)
                 } label: {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("\(sample.title)")
@@ -63,7 +63,7 @@ struct CalcCodeSamplesView: View {
 struct CalcCodeSampleDetail: View {
     let sample: CalcCodeSample
     let track: CalcTrack
-    @EnvironmentObject private var store: CalcAppStore
+    let store: CalcAppStore
 
     var body: some View {
         ScrollView {
