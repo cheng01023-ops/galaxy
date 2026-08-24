@@ -42,7 +42,7 @@ struct CalcHomeView: View {
                     Text("已完成 \(total.done) / \(total.total) 项打卡")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                    Text("每天 3～5 小时，5 天学完微积分核心")
+                    Text("每天 4～6 小时，5 天学完微积分核心")
                         .font(.footnote)
                         .foregroundColor(.secondary)
                 }
