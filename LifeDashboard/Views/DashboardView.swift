@@ -10,6 +10,7 @@ enum DashboardCardKind: String, Codable, CaseIterable {
     case cppLearning
     case cLearning
     case calculus
+    case timetable
 
     var title: String {
         switch self {
@@ -21,6 +22,7 @@ enum DashboardCardKind: String, Codable, CaseIterable {
         case .cppLearning: return "C++学习"
         case .cLearning: return "C语言学习"
         case .calculus: return "微积分学习"
+        case .timetable: return "课程表"
         }
     }
 }
@@ -64,6 +66,7 @@ struct DashboardView: View {
         DashboardLayoutItem(kind: .cppLearning, size: .half),
         DashboardLayoutItem(kind: .cLearning, size: .half),
         DashboardLayoutItem(kind: .calculus, size: .half),
+        DashboardLayoutItem(kind: .timetable, size: .half),
         DashboardLayoutItem(kind: .stepTrend, size: .full)
     ]
 
@@ -142,6 +145,8 @@ struct DashboardView: View {
             CLanguageLearningCard()
         case .calculus:
             CalculusLearningCard()
+        case .timetable:
+            TimetableCard()
         }
     }
 

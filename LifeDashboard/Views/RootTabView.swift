@@ -28,5 +28,5 @@ struct RootTabView: View {
 
 #Preview {
     RootTabView()
-        .modelContainer(for: [TodoItem.self, FocusSession.self], inMemory: true)
+        .modelContainer(for: [TodoItem.self, FocusSession.self, Course.self], inMemory: true)
 }

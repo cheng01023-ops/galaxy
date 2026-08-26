@@ -8,6 +8,7 @@ import WidgetKit
 struct LifeDashboardWidgetBundle: WidgetBundle {
     var body: some Widget {
         GalaxyWeatherWidget()
+        TimetableWidget()
         GalaxyClockWidget()
         GalaxyQuoteWidget()
         PomodoroLiveActivity()

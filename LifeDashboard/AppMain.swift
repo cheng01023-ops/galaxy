@@ -11,7 +11,8 @@ struct LifeDashboardApp: App {
     private let modelContainer: ModelContainer = {
         let schema = Schema([
             TodoItem.self,
-            FocusSession.self
+            FocusSession.self,
+            Course.self
         ])
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {
